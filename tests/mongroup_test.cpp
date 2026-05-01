@@ -8,7 +8,6 @@
 #include <utility>
 #include <vector>
 
-#include "catch/catch.hpp"
 #include "calendar.h"
 #include "cata_catch.h"
 #include "cata_utility.h"
@@ -28,7 +27,6 @@
 #include "point.h"
 #include "string_formatter.h"
 #include "type_id.h"
-
 
 static const mongroup_id GROUP_PETS( "GROUP_PETS" );
 static const mongroup_id GROUP_PET_DOGS( "GROUP_PET_DOGS" );
