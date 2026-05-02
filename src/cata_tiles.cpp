@@ -1900,8 +1900,17 @@ void cata_tiles::draw( const point &dest, const tripoint_bub_ms &center, int wid
                 // Alpha: ratio of saturated energy to total scalar light.
                 // Effect is subtle under bright ambient, vivid in darkness.
                 const float scalar = zlev_cache.lm[p.com.pos.x()][p.com.pos.y()].max();
-                const float ratio = scalar > 0.1f ? std::min( 1.0f, sat_mag / scalar ) : 0.0f;
-                const Uint8 alpha = static_cast<Uint8>( ratio * 80.0f );
+                // LE1: Replaced hard cutoff (std::min) with an asymptotic ratio formula to prevent neon-oversaturation.
+                // Division by zero is protected by the scalar > 0.1f condition.
+                // Float precision note: At extreme saturation values, (sat_mag + scalar) might truncate 
+                // to exactly sat_mag due to 32-bit float limits. This would yield a ratio of exactly 1.0f.
+                const float ratio = scalar > 0.1f ? sat_mag / ( sat_mag + scalar ) : 0.0f;
+
+                // LE1: Increased the alpha multiplier from 80.0f to 100.0f to compensate for the softer blend.
+                // Even if ratio truncates to 1.0f, static_cast<uint8_t>( 1.0f * 100.0f ) evaluates 
+                // to exactly 100. This fits into uint8_t (max 255), meaning this operation 
+                // shpuld be overflow-proof and memory safe.
+                const uint8_t alpha = static_cast<uint8_t>( ratio * 100.0f );
                 if( alpha == 0 ) {
                     continue;
                 }

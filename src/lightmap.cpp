@@ -780,16 +780,27 @@ void map::generate_lightmap( const int zlev )
     }
 }
 
-void map::add_light_source( const tripoint_bub_ms &p, float luminance,
-                            const light_color_rgb &color )
-{
+void map::add_light_source( const tripoint_bub_ms &p, float luminance, const light_color_rgb &color ) {
+    // LE1: Critical bounds check to prevent SIGSEGV during map edge operations (like tests).
+    // This MUST be the first check before any cache arrays are accessed!
+    if( !inbounds( p ) ) {
+        return;
+    }
+
+    // LE1: Early exit for zero or negative luminance to prevent incorrect energy subtraction.
+    if( luminance <= 0.0f ) {
+        return;
+    }
+
     auto &buf = get_cache( p.z() ).light_source_buffer[p.x()][p.y()];
+    
     if( luminance > buf.luminance ) {
         buf.luminance = luminance;
     }
-    // Color accumulates additively, weighted by luminance so brighter sources
-    // dominate the hue. Luminance itself uses max() for the buffer dedup that
-    // prevents redundant ray casting into neighbors (see apply_light_source).
+    
+    // LE1: Global accumulation of base energy for energy conservation.
+    buf.total_luminance_sum += luminance;
+
     if( color.is_colored() ) {
         buf.color += color * luminance;
     }
@@ -1433,14 +1444,21 @@ void map::apply_light_source( const tripoint_bub_ms &p, float luminance )
         luminance = 1.49f;
     }
 
-    // Color propagation: the buffer stores accumulated (color * luminance).
+     // Color propagation: the buffer stores accumulated (color * luminance).
     // Dividing by luminance recovers the average color, which castLight then
     // re-scales by the per-tile attenuated intensity -- same falloff as scalar.
     const auto &buf = light_source_buffer[p2.x()][p2.y()];
     const bool has_color = buf.color.is_colored();
     light_color_rgb source_color;
+    
     if( has_color ) {
+        // LE1: Replaces division by base luminance with a division by the total accumulated energy (including white light) to wash out colors.
+        // Contains a safe division guard (> 0.0f) and uses CPU-optimized multiplication by reciprocal.
+        if( buf.total_luminance_sum > 0.0f ) {
+        source_color = buf.color * ( 1.0f / buf.total_luminance_sum );}       else {
         source_color = buf.color * ( 1.0f / buf.luminance );
+}
+        
         // Set source tile color directly
         light_color_cache[p2.x()][p2.y()] += source_color * luminance;
         cache.has_colored_lights = true;
