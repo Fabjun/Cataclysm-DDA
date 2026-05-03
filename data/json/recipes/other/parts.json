@@ -337,7 +337,7 @@
     "result": "qt_sheet_metal_small",
     "type": "recipe",
     "copy-from": "sheet_metal_small",
-    "extend": { "proficiencies": [ { "proficiency": "prof_tempering" } ] },
+    "extend": { "proficiencies": [ { "proficiency": "prof_quenching" } ] },
     "components": [ [ [ "mc_steel_chunk", 1 ] ] ],
     "tools": [ [ [ "metal_tank", -1 ] ], [ [ "water", -120 ], [ "water_clean", -120 ] ] ]
   },

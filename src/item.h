@@ -22,7 +22,6 @@
 #include "coordinates.h"
 #include "craft_command.h"
 #include "enums.h"
-#include "flat_set.h"
 #include "global_vars.h"
 #include "gun_mode.h"
 #include "io_tags.h"
@@ -199,7 +198,7 @@ struct stacking_info {
 class item : public visitable
 {
     public:
-        using FlagsSetType = cata::flat_set<flag_id>;
+        using FlagsSetType = std::set<flag_id>;
 
         item();
 
@@ -606,18 +605,11 @@ class item : public visitable
                 reload_option &operator=( const reload_option & );
 
                 reload_option( const Character *who, const item_location &target, const item_location &ammo );
-                reload_option( const Character *who, const item_location &target, const item_location &ammo,
-                               int pocket_index );
 
                 const Character *who = nullptr;
                 item_location target;
                 item_location ammo;
                 bool is_reload_one = false;
-                // MAGAZINE_WELL pocket index in target->contents. Negative =
-                // first-compatible-well fallback.
-                // TODO(multimag): drop the default once all callers carry an
-                // explicit pocket_index.
-                int pocket_index = -1;
 
                 int qty() const {
                     return qty_;
@@ -639,11 +631,8 @@ class item : public visitable
          * @param u Player doing the reloading
          * @param ammo Location of ammo to be reloaded
          * @param qty caps reloading to this (or fewer) units
-         * @param pocket_index Optional index in this->contents identifying
-         *        which MAGAZINE_WELL pocket to reload. Negative falls
-         *        through to first-compatible-well selection.
          */
-        bool reload( Character &u, item_location ammo, int qty, int pocket_index = -1 );
+        bool reload( Character &u, item_location ammo, int qty );
         // is this speedloader compatible with this item?
         bool allows_speedloader( const itype_id &speedloader_id ) const;
 
@@ -1034,12 +1023,10 @@ class item : public visitable
         int insert_cost( const item &it ) const;
 
         /**
-         * Puts the given item into this one. When @p quiet is true, failure
-         * returns silently instead of triggering a debugmsg.
+         * Puts the given item into this one.
          */
         ret_val<void> put_in( const item &payload, pocket_type pk_type,
-                              bool unseal_pockets = false, Character *carrier = nullptr,
-                              bool quiet = false );
+                              bool unseal_pockets = false, Character *carrier = nullptr );
         void force_insert_item( const item &it, pocket_type pk_type );
 
         /**
@@ -1490,19 +1477,15 @@ class item : public visitable
         /**
          * Apply damage to const itemrained by @ref min_damage and @ref max_damage
          * @param qty maximum amount by which to adjust damage (negative permissible)
-         * @param holder character who is wearing/wielding/carrying this item, used to
-         *               surface a player-facing fault message when the avatar owns it.
-         *               Pass nullptr (default) for silent application.
          * @return whether item should be destroyed
          */
-        bool mod_damage( int qty, const Character *holder = nullptr );
+        bool mod_damage( int qty );
 
         /**
          * Same as mod_damage( itype::damage_scale ), advances item to next damage level
-         * @param holder see mod_damage. Pass nullptr (default) for silent application.
          * @return whether item should be destroyed
          */
-        bool inc_damage( const Character *holder = nullptr );
+        bool inc_damage();
 
         enum class armor_status {
             UNDAMAGED,
@@ -1514,13 +1497,11 @@ class item : public visitable
         /**
          * Damage related logic for armor items, wraps mod_damage with needed logic
          * This version is for items with durability
-         * @param holder see mod_damage. Pass nullptr (default) for silent application.
          * @return the state of the armor
          */
         armor_status damage_armor_durability( damage_unit &du, damage_unit &premitigated,
                                               const bodypart_id &bp,
-                                              double enchant_multiplier = 1,
-                                              const Character *holder = nullptr );
+                                              double enchant_multiplier = 1 );
 
         /**
          * Damage related logic for armor items that warp and transform instead of degrading.
@@ -2132,22 +2113,16 @@ class item : public visitable
         /** Idempotent filter setting an item specific flag. */
         item &set_flag( const flag_id &flag );
 
-        /** Check if item can have a fault, and if yes, applies it.
-         * `force`, if true, bypasses the check and applies the fault item do not define.
-         * `holder`, when non-null and indicating the avatar carrying this item,
-         * surfaces the fault's "message" JSON (with %s substituted by tname()) to the
-         * player log. Pass nullptr (default) for silent application. Some callers that
-         * already emit bespoke per-damage text should pass nullptr to avoid duplicates.
+        /** Check if item can have a fault, and if yes, applies it. This version do not print a message, use item_location version instead
+         * `force`, if true, bypasses the check and applies the fault item do not define
          */
-        bool set_fault( const fault_id &f_id, bool force = false,
-                        const Character *holder = nullptr );
+        bool set_fault( const fault_id &f_id, bool force = false, bool message = true );
 
-        /** Check if item can have any fault of type, and if yes, applies it.
-        * `force`, if true, bypasses the check and applies the fault item do not define.
-        * `holder`, see set_fault. Pass nullptr (default) for silent application.
+        /** Check if item can have any fault of type, and if yes, applies it. This version do not print a message, use item_location version instead
+        * `force`, if true, bypasses the check and applies the fault item do not define
         */
         void set_random_fault_of_type( const std::string &fault_type, bool force = false,
-                                       const Character *holder = nullptr );
+                                       bool message = true );
 
         /** Removes the fault from the item, if such is presented. Returns true if a fault was removed */
         bool remove_fault( const fault_id &fault_id );
@@ -2663,16 +2638,6 @@ class item : public visitable
          */
         int remaining_ammo_capacity() const;
 
-        /**
-         * Per-MAGAZINE_WELL-pocket overloads. The index is the pocket position
-         * in this->contents (insertion order). Out-of-range or non-MAGAZINE_WELL
-         * indices return 0. Use these to ask about a specific well on items
-         * with more than one MAGAZINE_WELL pocket.
-         */
-        int ammo_remaining( int well_idx ) const;
-        int ammo_capacity( int well_idx ) const;
-        int remaining_ammo_capacity( int well_idx ) const;
-
         /** Quantity of ammunition consumed per usage of tool or with each shot of gun */
         int ammo_required() const;
         item &first_ammo();
@@ -2806,30 +2771,6 @@ class item : public visitable
          * @return magazine type or "null" if item has integral magazine or no magazines for current ammo type.
          */
         itype_id magazine_default( bool conversion = false ) const;
-
-        /**
-         * Default magazine of every MAGAZINE_WELL pocket directly on this item.
-         * Wells with no default contribute NULL_ID. Does not walk into gunmods'
-         * own internal pockets; spawn-time and ambiguity checks operate on the
-         * host's own wells (mod-supplied wells are folded in via
-         * update_modified_pockets).
-         */
-        std::vector<itype_id> magazines_default() const;
-
-        /**
-         * Every MAGAZINE_WELL pocket directly on this item. Same scope rule as
-         * magazines_default().
-         */
-        std::vector<item_pocket *> all_magazine_well_pockets();
-        std::vector<const item_pocket *> all_magazine_well_pockets() const;
-
-        /**
-         * Spawn-time dressing for every MAGAZINE_WELL on this item.
-         * Empty wells get the default magazine when insert_default_mag is true;
-         * present-but-empty magazines get default ammo when fill_with_default_ammo
-         * is true; loaded magazines are untouched.
-         */
-        void dress_magazine_wells( bool insert_default_mag, bool fill_with_default_ammo );
 
         /**
          * Get compatible magazines (if any) for this item.
@@ -3395,15 +3336,6 @@ class item : public visitable
          * This flag is reset to `true` if item tags are changed.
          */
         bool requires_tags_processing = true;
-        uint64_t hot_flags_own = 0;
-        uint64_t hot_flags_inherited = 0;
-    public:
-        // Combined hot-flag bits across type, instance, and inherited contents.
-        uint64_t combined_hot_flags() const;
-        uint64_t own_hot_flags() const {
-            return hot_flags_own;
-        }
-    private:
         cata::heap<FlagsSetType> item_tags; // generic item specific flags
         cata::heap<FlagsSetType> inherited_tags_cache;
         cata::heap<FlagsSetType> prefix_tags_cache; // flags that will add prefixes to this item

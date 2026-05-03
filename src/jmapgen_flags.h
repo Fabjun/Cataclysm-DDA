@@ -16,7 +16,6 @@ enum class jmapgen_flags {
     erase_items_before_placing_terrain,
     no_underlying_rotate,
     avoid_creatures,
-    skip_on_open_air,
     last
 };
 

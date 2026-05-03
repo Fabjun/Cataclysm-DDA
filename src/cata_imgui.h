@@ -113,9 +113,6 @@ void set_scroll( scroll &s );
 void draw_colored_text( const std::string &original_text, const nc_color &color,
                         float wrap_width = 0.0F, bool *is_selected = nullptr,
                         bool *is_focused = nullptr, bool *is_hovered = nullptr );
-#ifndef TUI
-bool clear_pending();
-#endif
 void draw_colored_text( const std::string &original_text, nc_color &color,
                         float wrap_width = 0.0F, bool *is_selected = nullptr,
                         bool *is_focused = nullptr, bool *is_hovered = nullptr );

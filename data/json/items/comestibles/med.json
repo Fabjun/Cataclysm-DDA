@@ -17,7 +17,7 @@
     "flags": [ "IRREPLACEABLE_CONSUMABLE", "WATER_DISSOLVE", "NO_TEMP" ],
     "use_action": {
       "type": "consume_drug",
-      "activation_message": "You take a %s.",
+      "activation_message": "You take a melatonin tablet.",
       "effects": [ { "id": "melatonin", "duration": "14 h" } ]
     }
   },
@@ -302,7 +302,7 @@
     "stim": 12,
     "addiction_potential": 3,
     "addiction_type": "caffeine",
-    "use_action": { "type": "consume_drug", "activation_message": "You take a %s." },
+    "use_action": { "type": "consume_drug", "activation_message": "You take a caffeine pill." },
     "sleepiness_mod": 9
   },
   {
@@ -1297,7 +1297,11 @@
     "color": "white",
     "container": "bottle_plastic_pill_supplement",
     "flags": [ "NO_TEMP" ],
-    "use_action": { "type": "consume_drug", "activation_message": "You take a %s.", "effects": [ { "id": "iodine", "duration": 7200 } ] }
+    "use_action": {
+      "type": "consume_drug",
+      "activation_message": "You take some potassium iodide.",
+      "effects": [ { "id": "iodine", "duration": 7200 } ]
+    }
   },
   {
     "id": "joint",
@@ -1537,7 +1541,7 @@
     "addiction_type": "sleeping pill",
     "use_action": {
       "type": "consume_drug",
-      "activation_message": "You take an %s.",
+      "activation_message": "You take an antihistamine pill.",
       "effects": [ { "id": "took_antihistamine", "duration": "10 h" } ]
     }
   },
@@ -1736,7 +1740,11 @@
     "symbol": "!",
     "color": "blue",
     "container": "bottle_plastic_pill_supplement",
-    "use_action": { "type": "consume_drug", "activation_message": "You take a %s.", "effects": [ { "id": "pblue", "duration": 3600 } ] }
+    "use_action": {
+      "type": "consume_drug",
+      "activation_message": "You take some Prussian blue.",
+      "effects": [ { "id": "pblue", "duration": 3600 } ]
+    }
   },
   {
     "id": "quikclot",
@@ -1900,7 +1908,7 @@
     "flags": [ "IRREPLACEABLE_CONSUMABLE", "WATER_DISSOLVE", "NO_TEMP" ],
     "use_action": {
       "type": "consume_drug",
-      "activation_message": "You take a %s.",
+      "activation_message": "You take the %s.",
       "vitamins": [ [ "calcium", 24, 48 ], [ "iron", 24, 48 ], [ "vitC", 24, 48 ] ]
     },
     "//": "Yes, the vitamins are intentionally duplicated here. The consume/use/iteminfo UI needs them in use_action, but to actually pass on the vitamins they need to be in the comestible data, as below.",
@@ -1923,7 +1931,7 @@
     "symbol": "!",
     "color": "magenta",
     "container": "bottle_plastic_pill_supplement",
-    "use_action": { "type": "consume_drug", "activation_message": "You take a %s.", "vitamins": [ [ "calcium", 75 ] ] }
+    "use_action": { "type": "consume_drug", "activation_message": "You take the %s.", "vitamins": [ [ "calcium", 75 ] ] }
   },
   {
     "id": "bonemeal_tablet",
@@ -1943,7 +1951,7 @@
     "color": "white",
     "looks_like": "calcium_tablet",
     "flags": [ "NO_TEMP" ],
-    "use_action": { "type": "consume_drug", "activation_message": "You take a %s.", "vitamins": [ [ "calcium", 24 ] ] },
+    "use_action": { "type": "consume_drug", "activation_message": "You take the %s.", "vitamins": [ [ "calcium", 24 ] ] },
     "vitamins": [ [ "meat_allergen", 1 ] ]
   },
   {
@@ -1964,7 +1972,7 @@
     "color": "yellow",
     "looks_like": "calcium_tablet",
     "flags": [ "NO_TEMP" ],
-    "use_action": { "type": "consume_drug", "activation_message": "You take a %s.", "vitamins": [ [ "calcium", 23 ] ] },
+    "use_action": { "type": "consume_drug", "activation_message": "You take the %s.", "vitamins": [ [ "calcium", 23 ] ] },
     "vitamins": [ [ "meat_allergen", 1 ] ]
   },
   {
@@ -1982,7 +1990,7 @@
     "flags": [ "IRREPLACEABLE_CONSUMABLE", "NO_TEMP" ],
     "symbol": "!",
     "color": "magenta",
-    "use_action": { "type": "consume_drug", "activation_message": "You take a %s.", "vitamins": [ [ "vitC", 556 ] ] }
+    "use_action": { "type": "consume_drug", "activation_message": "You take the %s.", "vitamins": [ [ "vitC", 556 ] ] }
   },
   {
     "id": "vitc_fragment",
@@ -1999,7 +2007,7 @@
     "flags": [ "IRREPLACEABLE_CONSUMABLE", "NO_TEMP" ],
     "symbol": "!",
     "color": "magenta",
-    "use_action": { "type": "consume_drug", "activation_message": "You take a %s.", "vitamins": [ [ "vitC", 92 ] ] }
+    "use_action": { "type": "consume_drug", "activation_message": "You take the %s.", "vitamins": [ [ "vitC", 92 ] ] }
   },
   {
     "id": "gummy_vitamins",
@@ -2194,7 +2202,7 @@
     "color": "white",
     "use_action": {
       "type": "consume_drug",
-      "activation_message": "You take some %s.",
+      "activation_message": "You take some heartburn medicine.",
       "effects": [ { "id": "tummy_tablet", "duration": 6400 } ]
     },
     "flags": [ "NPC_SAFE", "IRREPLACEABLE_CONSUMABLE" ]
@@ -2219,7 +2227,7 @@
     "flags": [ "IRREPLACEABLE_CONSUMABLE", "WATER_DISSOLVE", "NPC_SAFE", "NO_TEMP" ],
     "use_action": {
       "type": "consume_drug",
-      "activation_message": "You take an %s.",
+      "activation_message": "You take an antacid tablet.",
       "effects": [ { "id": "tummy_tablet", "duration": 6400 } ],
       "vitamins": [ [ "calcium", 25 ] ]
     }
@@ -2396,7 +2404,7 @@
     "symbol": "!",
     "color": "white",
     "flags": [ "NO_TEMP" ],
-    "use_action": { "type": "consume_drug", "activation_message": "You take a %s." }
+    "use_action": { "type": "consume_drug", "activation_message": "You take the pill." }
   },
   {
     "id": "estrogen",

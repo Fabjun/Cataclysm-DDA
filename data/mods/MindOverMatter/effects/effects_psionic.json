@@ -554,10 +554,7 @@
     "enchantments": [
       {
         "condition": {
-          "and": [
-            { "not": { "u_has_effect": "effect_teleport_stride" } },
-            { "not": { "u_has_effect": "effect_telekinetic_momentum" } }
-          ]
+          "and": [ { "not": { "u_has_effect": "effect_teleport_stride" } }, { "not": { "u_has_effect": "effect_telekin_momentum" } } ]
         },
         "values": [
           {
@@ -569,9 +566,7 @@
         ]
       },
       {
-        "condition": {
-          "and": [ { "u_has_effect": "effect_teleport_stride" }, { "not": { "u_has_effect": "effect_telekinetic_momentum" } } ]
-        },
+        "condition": { "and": [ { "u_has_effect": "effect_teleport_stride" }, { "not": { "u_has_effect": "effect_telekin_momentum" } } ] },
         "values": [
           {
             "value": "MOVE_COST",
@@ -584,9 +579,7 @@
         ]
       },
       {
-        "condition": {
-          "and": [ { "u_has_effect": "effect_telekinetic_momentum" }, { "not": { "u_has_effect": "effect_teleport_stride" } } ]
-        },
+        "condition": { "and": [ { "u_has_effect": "effect_telekin_momentum" }, { "not": { "u_has_effect": "effect_teleport_stride" } } ] },
         "values": [
           {
             "value": "MOVE_COST",
@@ -599,7 +592,7 @@
         ]
       },
       {
-        "condition": { "and": [ { "u_has_effect": "effect_teleport_stride" }, { "u_has_effect": "effect_telekinetic_momentum" } ] },
+        "condition": { "and": [ { "u_has_effect": "effect_teleport_stride" }, { "u_has_effect": "effect_telekin_momentum" } ] },
         "values": [
           {
             "value": "MOVE_COST",
@@ -1984,25 +1977,25 @@
         "incoming_damage_mod": [
           {
             "type": "bash",
-            "multiply": { "math": [ "max( ( ( u_spell_level('telekinetic_momentum') * -0.01 ) * psionic_power_modifiers() ), -0.3)" ] }
+            "multiply": { "math": [ "( u_spell_level('telekinetic_momentum') * -0.01 ) * psionic_power_modifiers()" ] }
           },
           {
             "type": "stab",
-            "multiply": { "math": [ "max( ( ( u_spell_level('telekinetic_momentum') * -0.005 ) * psionic_power_modifiers() ), -0.15)" ] }
+            "multiply": { "math": [ "( u_spell_level('telekinetic_momentum') * -0.005 ) * psionic_power_modifiers()" ] }
           },
           {
             "type": "cut",
-            "multiply": { "math": [ "max( ( ( u_spell_level('telekinetic_momentum') * -0.005 ) * psionic_power_modifiers() ), -0.15)" ] }
+            "multiply": { "math": [ "( u_spell_level('telekinetic_momentum') * -0.005 ) * psionic_power_modifiers()" ] }
           },
           {
             "type": "bullet",
-            "multiply": { "math": [ "max( ( ( u_spell_level('telekinetic_momentum') * -0.02 ) * psionic_power_modifiers() ), -0.6)" ] }
+            "multiply": { "math": [ "( u_spell_level('telekinetic_momentum') * -0.02 ) * psionic_power_modifiers()" ] }
           }
         ],
         "values": [
           {
             "value": "ATTACK_SPEED",
-            "multiply": { "math": [ "max( ( ( u_spell_level('telekinetic_momentum') * -0.01 ) * psionic_power_modifiers() ), -0.3)" ] }
+            "multiply": { "math": [ "( u_spell_level('telekinetic_momentum') * -0.01 ) * psionic_power_modifiers()" ] }
           }
         ]
       },

@@ -2063,7 +2063,6 @@
         "-....-",
         "------"
       ],
-      "flags": [ "ERASE_ITEMS_BEFORE_PLACING_TERRAIN" ],
       "palettes": [ "roof_palette" ]
     }
   },

@@ -240,16 +240,9 @@ target_link_libraries(
         third-party
         INTERFACE
         snmalloc
+        Synchronization.lib
+        WindowsApp.lib
         )
-
-if (WIN32)
-    target_link_libraries(
-            third-party
-            INTERFACE
-            Synchronization.lib
-            WindowsApp.lib
-            )
-endif ()
 
 # Zstandard
 file(GLOB ZSTD_HEADERS zstd/**/*.h)

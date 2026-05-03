@@ -11,7 +11,6 @@
   {
     "type": "overmap_terrain",
     "id": [
-      "afs_modular_habitat_pillars_ground",
       "afs_modular_habitat_pillars_ground_walkway",
       "afs_modular_habitat_end_pillars_above_walkway",
       "afs_modular_habitat_pillars"
@@ -31,16 +30,17 @@
   },
   {
     "type": "overmap_terrain",
-    "id": [ "afs_modular_habitat_center_farm", "afs_modular_habitat_greenhouse", "afs_modular_habitat_greenhouse_ramp_up" ],
+    "id": [ "afs_modular_habitat_center_farm", "afs_modular_habitat_greenhouse" ],
     "name": "urban farm",
     "sym": "f",
     "color": "light_green",
-    "see_cost": "high"
+    "see_cost": "high",
+    "flags": [ "PP_GENERATE_RUINED" ]
   },
   {
     "type": "overmap_terrain",
-    "id": [ "afs_modular_habitat_roof" ],
-    "name": "habitat roof",
+    "id": [ "afs_modular_habitat_greenhouse_roof2", "afs_modular_habitat_greenhouse_roof" ],
+    "name": "urban farm roof",
     "sym": "f",
     "color": "light_green",
     "see_cost": "none",
@@ -48,7 +48,7 @@
   },
   {
     "type": "overmap_terrain",
-    "id": [ "afs_modular_habitat_greenhouse_control_ramp" ],
+    "id": [ "afs_modular_habitat_greenhouse_control_room_1s", "afs_modular_habitat_greenhouse_control_room_1s_roof" ],
     "name": "farm control room",
     "sym": "o",
     "color": "light_green",

@@ -54,7 +54,6 @@
 #include "enums.h"
 #include "event.h"
 #include "event_bus.h"
-#include "faction.h"
 #include "fault.h"
 #include "field_type.h"
 #include "flag.h"
@@ -348,9 +347,7 @@ static const itype_id itype_water_clean( "water_clean" );
 static const json_character_flag json_flag_ASOCIAL1( "ASOCIAL1" );
 static const json_character_flag json_flag_ASOCIAL2( "ASOCIAL2" );
 static const json_character_flag json_flag_IMMUNE_HEARING_DAMAGE( "IMMUNE_HEARING_DAMAGE" );
-static const json_character_flag json_flag_NUMB( "NUMB" );
 static const json_character_flag json_flag_PAIN_IMMUNE( "PAIN_IMMUNE" );
-static const json_character_flag json_flag_PSYCHOPATH( "PSYCHOPATH" );
 static const json_character_flag json_flag_READ_IN_DARKNESS( "READ_IN_DARKNESS" );
 static const json_character_flag json_flag_SAFECRACK_NO_TOOL( "SAFECRACK_NO_TOOL" );
 static const json_character_flag json_flag_SILENT_SPELL( "SILENT_SPELL" );
@@ -411,6 +408,8 @@ static const ter_str_id ter_t_tree( "t_tree" );
 static const ter_str_id ter_t_trunk( "t_trunk" );
 
 static const trait_id trait_DEBUG_HS( "DEBUG_HS" );
+static const trait_id trait_NUMB( "NUMB" );
+static const trait_id trait_PSYCHOPATH( "PSYCHOPATH" );
 static const trait_id trait_SPIRITUAL( "SPIRITUAL" );
 static const trait_id trait_STOCKY_TROGLO( "STOCKY_TROGLO" );
 
@@ -3089,6 +3088,10 @@ void pickup_activity_actor::do_turn( player_activity &, Character &who )
 
         cancel_pickup( who );
 
+        if( who.get_value( "THIEF_MODE_KEEP" ).str() != "YES" ) {
+            who.set_value( "THIEF_MODE", "THIEF_ASK" );
+        }
+
         if( !keep_going ) {
             // The user canceled the activity, so we're done
             // AIM might have more pickup activities pending, also cancel them.
@@ -4943,8 +4946,6 @@ bool target_practice_activity_actor::check_weapon_valid( Character &who )
 
 bool target_practice_activity_actor::attempt_reload( Character &who )
 {
-    // TODO(multimag): pocket_index defaults to -1; target practice cannot
-    // pick a specific well on multi-well guns yet.
     item *gun = gun_loc.get_item();
 
     std::vector<item_location> ammo_locs;
@@ -5793,6 +5794,9 @@ void consume_activity_actor::finish( player_activity &act, Character & )
             player_character.consume( consume_item, /*force=*/true );
         } else {
             debugmsg( "Item location/name to be consumed should not be null." );
+        }
+        if( player_character.get_value( "THIEF_MODE_KEEP" ).str() != "YES" ) {
+            player_character.set_value( "THIEF_MODE", "THIEF_ASK" );
         }
     }
 
@@ -7780,7 +7784,6 @@ reload_activity_actor::reload_activity_actor( item::reload_option &&opt, int ext
 {
     moves_total = opt.moves() + extra_moves;
     quantity = opt.qty();
-    pocket_index = opt.pocket_index;
     target_loc = std::move( opt.target );
     ammo_loc = std::move( opt.ammo );
     seconds_per_round = opt.qty() ? std::min( 1, moves_total / quantity ) : 0;
@@ -7857,7 +7860,7 @@ void reload_activity_actor::reload( player_activity &act, Character &who, int lo
     const std::string reloadable_name = reloadable.tname();
     const bool ammo_is_filthy = ammo.is_filthy();
 
-    if( !reloadable.reload( who, ammo_loc, qty, pocket_index ) ) {
+    if( !reloadable.reload( who, ammo_loc, qty ) ) {
         return;
     }
 
@@ -7970,7 +7973,6 @@ void reload_activity_actor::serialize( JsonOut &jsout ) const
 
     jsout.member( "moves_total", moves_total );
     jsout.member( "qty", quantity );
-    jsout.member( "pocket_index", pocket_index );
     jsout.member( "target_loc", target_loc );
     jsout.member( "ammo_loc", ammo_loc );
     jsout.member( "seconds_per_round", seconds_per_round );
@@ -7987,10 +7989,6 @@ std::unique_ptr<activity_actor> reload_activity_actor::deserialize( JsonValue &j
 
     data.read( "moves_total", actor.moves_total );
     data.read( "qty", actor.quantity );
-    // Saves missing the key route through the first-compatible-well path.
-    // TODO(multimag): backwards-compat default; remove after a stable release.
-    actor.pocket_index = -1;
-    data.read( "pocket_index", actor.pocket_index );
     data.read( "target_loc", actor.target_loc );
     data.read( "ammo_loc", actor.ammo_loc );
     data.read( "seconds_per_round", actor.seconds_per_round );
@@ -9054,7 +9052,7 @@ void play_with_pet_activity_actor::finish( player_activity &act, Character &who 
         who.add_msg_if_player( m_good, playstr, pet_name );
     }
 
-    if( !who.has_flag( json_flag_PSYCHOPATH ) && !who.has_flag( json_flag_NUMB ) ) {
+    if( !who.has_trait( trait_PSYCHOPATH ) && !who.has_trait( trait_NUMB ) ) {
         who.add_morale( morale_play_with_pet, rng( 3, 10 ), 10, 5_hours, 25_minutes );
         who.add_msg_if_player( m_good, _( "Playing with your %s has lifted your spirits a bit." ),
                                pet_name );
@@ -9452,22 +9450,18 @@ std::unique_ptr<activity_actor> haircut_activity_actor::deserialize( JsonValue &
 static bool check_stealing( Character &who, item &it )
 {
     if( !it.is_owned_by( who, true ) ) {
-        const std::string thief_mode = who.get_value( "THIEF_MODE" ).str();
-        if( thief_mode == "THIEF_HONEST" ) {
-            return false;
-        } else if( thief_mode != "THIEF_STEAL" ) {
-            // Default (THIEF_ASK) - check faction steal_persist
-            faction *owner_fac = g->faction_manager_ptr->get( it.get_owner(), false );
-            if( owner_fac && owner_fac->steal_persist.has_value() ) {
-                if( !*owner_fac->steal_persist ) {
-                    return false; // NEVER
-                }
-                // ALWAYS
-            } else if( !Pickup::query_thief( it ) ) {
-                return false;
+        // Has the player given input on if stealing is ok?
+        if( who.get_value( "THIEF_MODE" ).str() == "THIEF_ASK" ) {
+            Pickup::query_thief( it );
+        }
+        if( who.get_value( "THIEF_MODE" ).str() == "THIEF_HONEST" ) {
+            if( who.get_value( "THIEF_MODE_KEEP" ).str() != "YES" ) {
+                who.set_value( "THIEF_MODE", "THIEF_ASK" );
             }
+            return false;
         }
     }
+
     return true;
 }
 
@@ -10449,7 +10443,7 @@ void mend_item_activity_actor::finish( player_activity &act, Character &who )
         }
     }
     for( const ::fault_id &id : fix.faults_added ) {
-        target.set_fault( id, true, nullptr );
+        target.set_fault( id, true, false );
     }
     for( const auto& [var_name, var_value] : fix.set_variables ) {
         target.set_var( var_name, var_value );
@@ -12627,12 +12621,6 @@ void wash_activity_actor::finish( player_activity &act, Character &p )
             p.i_add_or_drop( copy );
         } else {
             filthy_item->unset_flag( flag_FILTHY );
-            // Also clean attached pockets
-            for( item *pocket : filthy_item->get_contents().get_added_pockets_mutable() ) {
-                if( pocket->has_flag( flag_FILTHY ) ) {
-                    pocket->unset_flag( flag_FILTHY );
-                }
-            }
             p.on_worn_item_washed( *filthy_item );
         }
     }
@@ -14012,15 +14000,6 @@ void zone_sort_activity_actor::stage_do( player_activity &act, Character &you )
                 } else {
                     ++dit;
                 }
-            }
-        }
-        // Drop count-full destinations so pickup does not bounce.
-        for( auto dit = dest_set.begin(); dit != dest_set.end(); ) {
-            if( zt_id != zone_type_id::NULL_ID() &&
-                !zone_sorting::dest_has_capacity( *dit, zt_id, thisitem, fac_id ) ) {
-                dit = dest_set.erase( dit );
-            } else {
-                ++dit;
             }
         }
 

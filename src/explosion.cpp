@@ -876,9 +876,9 @@ void emp_blast( const tripoint_bub_ms &p )
             item_location loc = item_location( map_cursor( p ), &it );
 
             if( get_option<bool>( "GAME_EMP" ) ) {
-                it.set_fault( fault_emp_reboot, true, nullptr );
+                it.set_fault( fault_emp_reboot, true, false );
             } else {
-                it.set_random_fault_of_type( "shorted", true, nullptr );
+                it.set_random_fault_of_type( "shorted", true, false );
             }
             //map::make_active adds the item to the active item processing list, so that it can reboot without further interaction
             here.make_active( loc );

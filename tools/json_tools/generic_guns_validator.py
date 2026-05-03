@@ -15,7 +15,6 @@ AMMO_TYPE_WHITELIST = {
     'atgm',  # Rocket
     'atlatl',
     'bolt_ballista',
-    'bone_dart',
     'barb',
     'battery',
     'BB',
@@ -49,10 +48,6 @@ SKILL_WHITELIST = {
 # This could go away if obsolete stuff were explicitly marked as such.
 ID_WHITELIST = {
     # Guns
-    'bone_dart_launcher',
-    'nl_destruction_ray',
-    'nl_turret_chem_thrower',
-    'nl_turret_phase_goo_thrower',
     'coilgun',
     'slamfire_shotgun',
     'slamfire_shotgun_d',

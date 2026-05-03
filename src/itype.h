@@ -3,7 +3,6 @@
 #define CATA_SRC_ITYPE_H
 
 #include <cstddef>
-#include <cstdint>
 #include <map>
 #include <memory>
 #include <optional>
@@ -24,7 +23,6 @@
 #include "damage.h"
 #include "enums.h" // point
 #include "explosion.h"
-#include "flat_set.h"
 #include "flexbuffer_json.h"
 #include "game_constants.h"
 #include "global_vars.h"
@@ -1288,7 +1286,7 @@ struct itype {
         friend class Item_factory;
         friend struct mod_tracker;
 
-        using FlagsSetType = cata::flat_set<flag_id>;
+        using FlagsSetType = std::set<flag_id>;
 
         /**
          * Slots for various item type properties. Each slot may contain a valid pointer or null, check
@@ -1470,8 +1468,6 @@ struct itype {
         mtype_id source_monster = mtype_id::NULL_ID();
     private:
         FlagsSetType item_tags;
-        uint64_t hot_flag_bits = 0;
-        friend class item;
 
     public:
         // memory card related per-type static data

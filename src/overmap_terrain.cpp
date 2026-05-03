@@ -468,7 +468,6 @@ std::string enum_to_string<oter_travel_cost_type>( oter_travel_cost_type data )
         case oter_travel_cost_type::highway: return "highway";
         case oter_travel_cost_type::road: return "road";
         case oter_travel_cost_type::field: return "field";
-        case oter_travel_cost_type::crop_field: return "crop_field";
         case oter_travel_cost_type::dirt_road: return "dirt_road";
         case oter_travel_cost_type::trail: return "trail";
         case oter_travel_cost_type::forest: return "forest";
@@ -557,7 +556,6 @@ static string_id<map_data_summary> map_data_for_travel_cost( oter_travel_cost_ty
         case oter_travel_cost_type::field:
         case oter_travel_cost_type::dirt_road:
             return map_data_summary_empty_omt;
-        case oter_travel_cost_type::crop_field:
         case oter_travel_cost_type::trail:
         case oter_travel_cost_type::forest:
         case oter_travel_cost_type::shore:
@@ -837,7 +835,7 @@ void oter_t::get_rotation_and_subtile( int &rotation, int &subtile ) const
 {
     if( is_linear() ) {
         const om_lines::type &t = om_lines::all[line];
-        rotation = ( 4 - t.rotation ) % 4;;
+        rotation = t.rotation;
         subtile = t.subtile;
     } else if( is_rotatable() ) {
         rotation = static_cast<int>( get_dir() );

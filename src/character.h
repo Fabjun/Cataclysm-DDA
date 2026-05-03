@@ -258,7 +258,6 @@ enum class blood_type {
     blood_A,
     blood_B,
     blood_AB,
-    blood_acid,
     num_bt
 };
 
@@ -779,8 +778,8 @@ class Character : public Creature, public visitable
         std::vector<aim_type> get_aim_types( const item &gun ) const;
         int point_shooting_limit( const item &gun ) const;
         double fastest_aiming_method_speed( const item &gun, double recoil,
-                                            const Target_attributes &target_attributes,
-                                            const parallax_cache &parallaxes ) const;
+                                            const Target_attributes &target_attributes = Target_attributes(),
+                                            std::optional<std::reference_wrapper<const parallax_cache>> parallax_cache = std::nullopt ) const;
         int most_accurate_aiming_method_limit( const item &gun ) const;
         double aim_factor_from_volume( const item &gun ) const;
         double aim_factor_from_length( const item &gun ) const;
@@ -802,8 +801,8 @@ class Character : public Creature, public visitable
         * Use a struct to avoid repeatedly calculate some modifiers that are actually persistent for aiming UI drawing.
         */
         double aim_per_move( const item &gun, double recoil,
-                             const Target_attributes &target_attributes,
-                             const aim_mods_cache &aim_cache ) const;
+                             const Target_attributes &target_attributes = Target_attributes(),
+                             std::optional<std::reference_wrapper<const aim_mods_cache>> aim_cache = std::nullopt ) const;
 
         int get_dodges_left() const;
         void set_dodges_left( int dodges );
@@ -1916,19 +1915,8 @@ class Character : public Creature, public visitable
          */
         void mend_item( item_location &&obj, bool interactive = true );
 
-        /**
-         * Build the list of reload_option entries for selecting reload ammo
-         * for `base`. With `per_well_targets` false the function emits one
-         * option per item (base and each gunmod) plus one per loaded
-         * magazine, all carrying reload_option::pocket_index = -1, which
-         * routes execution through the first-compatible-well selection
-         * inside item::reload. With `per_well_targets` true it additionally
-         * walks every MAGAZINE_WELL pocket on the base item and on each
-         * gunmod, emitting per-well reload targets whose pocket_index
-         * identifies the specific well in target->contents.
-         */
         bool list_ammo( const item_location &base, std::vector<item::reload_option> &ammo_list,
-                        bool empty = true, bool per_well_targets = false ) const;
+                        bool empty = true ) const;
         /**
          * Select suitable ammo with which to reload the item
          * @param base Item to select ammo for

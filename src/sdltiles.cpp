@@ -168,11 +168,6 @@ static void ClearScreen()
     RenderClear( renderer );
 }
 
-void clear_sdl_window()
-{
-    ClearScreen();
-}
-
 static void InitSDL()
 {
     int init_flags = SDL_INIT_VIDEO | SDL_INIT_TIMER;

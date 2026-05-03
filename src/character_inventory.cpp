@@ -1604,8 +1604,6 @@ std::string Character::weapname_mode() const
 
 std::string Character::weapname_ammo() const
 {
-    // TODO(multimag): HUD '(empty)' indicator and ammo count summarize the
-    // first MAGAZINE_WELL only. Multi-well guns need a per-well summary.
     if( weapon.is_gun() ) {
         gun_mode current_mode = weapon.gun_current_mode();
         const bool no_mode = !current_mode.target;
@@ -2349,10 +2347,7 @@ bool Character::add_or_drop_with_msg( item &it, const bool /*unloading*/, const 
                 break;
             }
         }
-        const std::vector<item *> wielded_mags = weapon.magazines_current();
-        const bool wielded_mag_collision = std::find( wielded_mags.begin(), wielded_mags.end(),
-                                           &it ) != wielded_mags.end();
-        const bool allow_wield = !wielded_has_it && !wielded_mag_collision;
+        const bool allow_wield = !wielded_has_it && weapon.magazine_current() != &it;
         const int prev_charges = it.charges;
         item_location ni = i_add( it, true, avoid,
                                   original_inventory_item, /*allow_drop=*/false, /*allow_wield=*/allow_wield );
@@ -2502,37 +2497,17 @@ bool Character::unload( item_location &loc, bool bypass_activity,
         }
         return true;
 
-    } else if( !target->magazines_current().empty() ) {
-        // Snapshot the loaded magazine pointers up front; the vector will shift
-        // as we remove magazines from the wells.
-        std::vector<item *> mags_to_eject = target->magazines_current();
-        if( !bypass_activity && mags_to_eject.size() > 1 ) {
-            std::vector<std::string> mag_msgs;
-            mag_msgs.reserve( mags_to_eject.size() + 1 );
-            for( const item *mag : mags_to_eject ) {
-                mag_msgs.emplace_back( mag->tname() );
-            }
-            mag_msgs.emplace_back( _( "All" ) );
-            const int ret = uilist( _( "Unload which magazine?" ), mag_msgs );
-            if( ret < 0 ) {
-                return false;
-            }
-            if( ret < static_cast<int>( mags_to_eject.size() ) ) {
-                item *picked = mags_to_eject[ret];
-                mags_to_eject = { picked };
-            }
+    } else if( target->magazine_current() ) {
+        if( !this->add_or_drop_with_msg( *target->magazine_current(), true, nullptr,
+                                         target->magazine_current() ) ) {
+            return false;
         }
-        for( item *mag : mags_to_eject ) {
-            if( !this->add_or_drop_with_msg( *mag, true, nullptr, mag ) ) {
-                return false;
-            }
-            // Eject magazine consuming half as much time as required to insert it
-            this->mod_moves( -this->item_reload_cost( *target, *mag, -1 ) / 2 );
+        // Eject magazine consuming half as much time as required to insert it
+        this->mod_moves( -this->item_reload_cost( *target, *target->magazine_current(), -1 ) / 2 );
 
-            target->remove_items_with( [mag]( const item & e ) {
-                return &e == mag;
-            } );
-        }
+        target->remove_items_with( [&target]( const item & e ) {
+            return target->magazine_current() == &e;
+        } );
 
     } else if( target->ammo_remaining( ) ) {
         int qty = target->ammo_remaining( );

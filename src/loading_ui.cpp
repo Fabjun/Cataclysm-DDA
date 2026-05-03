@@ -53,8 +53,7 @@ static void redraw()
 {
 #ifdef TILES
     ImGui::SetNextWindowSize( ImGui::GetMainViewport()->Size );
-    ImGui::SetNextWindowPos( {0, 0}, ImGuiCond_Always );
-    ImGui::PushStyleVar( ImGuiStyleVar_WindowBorderSize, 0.0f );
+    ImGui::SetNextWindowPos( {-1, -1}, ImGuiCond_Always );
     if( ImGui::Begin( "Loading…", nullptr,
                       ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove |
                       ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoSavedSettings ) ) {
@@ -93,7 +92,6 @@ static void redraw()
         cataimgui::draw_colored_text( loading_msg, ImGui::GetContentRegionAvail().x );
     }
     ImGui::End();
-    ImGui::PopStyleVar();
 
 #else
     int x = ( TERMX - static_cast<int>( gLUI->splash_width ) ) / 2;
@@ -232,8 +230,7 @@ void loading_ui::done()
 {
     if( gLUI != nullptr ) {
 #ifdef TILES
-        // Need to manually clear the screen due to using direct ImGui calls
-        clear_sdl_window();
+        gLUI->chosen_load_img = cata_path();
 #endif
         delete gLUI->ui;
         delete gLUI->bg;

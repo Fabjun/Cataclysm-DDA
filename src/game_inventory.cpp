@@ -3,7 +3,6 @@
 #include <imgui/imgui.h>
 #include <algorithm>
 #include <bitset>
-#include <climits>
 #include <cmath>
 #include <cstddef>
 #include <cstdint>
@@ -71,7 +70,6 @@
 #include "translations.h"
 #include "type_id.h"
 #include "ui_manager.h"
-#include "uilist.h"
 #include "uistate.h"
 #include "units.h"
 #include "units_utility.h"
@@ -170,9 +168,6 @@ static item_location inv_internal( Character &u, const inventory_selector_preset
         // Default behavior.
         inv_s.add_character_items( u, add_ebooks );
         inv_s.add_nearby_items( radius, add_ebooks );
-        if( using_consume_menu ) {
-            inv_s.add_vehicle_tank_items( u.pos_bub() );
-        }
     }
 
     //input from global consume menu UI state
@@ -3090,16 +3085,15 @@ class select_ammo_inventory_preset : public inventory_selector_preset
             }, _( "LOCATION" ) );
 
             append_cell( [&you, target]( const item_location & loc ) {
-                const std::vector<reload_target> targets = get_possible_reload_targets( target );
-                const reload_target *match = find_matching_reload_target( targets, loc );
-                if( match == nullptr ) {
-                    return std::string();
+                for( const item_location &opt : get_possible_reload_targets( target ) ) {
+                    if( opt.can_reload_with( loc, true ) ) {
+                        if( opt == target ) {
+                            return std::string();
+                        }
+                        return string_format( _( "%s, %s" ), opt->type_name(), opt.describe( &you ) );
+                    }
                 }
-                if( match->target == target ) {
-                    return std::string();
-                }
-                return string_format( _( "%s, %s" ), match->target->type_name(),
-                                      match->target.describe( &you ) );
+                return std::string();
             }, _( "DESTINATION" ) );
 
             append_cell( []( const inventory_entry & entry ) {
@@ -3158,17 +3152,21 @@ class select_ammo_inventory_preset : public inventory_selector_preset
                 return false;
             }
 
-            const std::vector<reload_target> targets = get_possible_reload_targets( target );
-            for( const reload_target &rt : targets ) {
-                // Speedloader compatibility is queried on the owner gun, not
-                // on a specific well pocket.
-                if( loc->has_flag( flag_SPEEDLOADER ) && rt.target->allows_speedloader( loc->typeId() ) &&
-                    loc->ammo_remaining() > 1 && rt.target->ammo_remaining() < 1 &&
-                    rt.target.can_reload_with( loc, true ) ) {
+            std::vector<item_location> opts = get_possible_reload_targets( target );
+
+            for( item_location &p : opts ) {
+                if( ( loc->has_flag( flag_SPEEDLOADER ) && p->allows_speedloader( loc->typeId() ) &&
+                      loc->ammo_remaining( ) > 1 && p->ammo_remaining( ) < 1 ) &&
+                    p.can_reload_with( loc, true ) ) {
+                    return true;
+                }
+
+                if( p.can_reload_with( loc, true ) ) {
                     return true;
                 }
             }
-            return find_matching_reload_target( targets, loc ) != nullptr;
+
+            return false;
         }
 
         // sort in order of move cost (ascending), then remaining ammo (descending) with empty magazines always last
@@ -3230,90 +3228,16 @@ item::reload_option game_menus::inv::select_ammo( Character &you, const item_loc
         return item::reload_option();
     }
 
-    // The selector lists one entry per ammo source. When the picked source
-    // matches multiple reload targets (sibling wells, multiple loaded mags
-    // of the same type), disambiguate via a follow-up uilist instead of
-    // duplicating selector entries per (source, target) pair.
-    const std::vector<reload_target> targets = get_possible_reload_targets( loc );
-    const std::vector<const reload_target *> matches =
-        find_all_matching_reload_targets( targets, selected.first );
-    if( matches.empty() ) {
-        return item::reload_option();
+    item_location target_loc;
+    for( const item_location &opt : get_possible_reload_targets( loc ) ) {
+        if( opt.can_reload_with( selected.first, true ) ) {
+            target_loc = opt;
+            break;
+        }
     }
 
-    const reload_target *match = matches.front();
-    bool disambiguated = false;
-    if( matches.size() > 1 ) {
-        // Disambiguate: prompt the player, suffixing labels with (well N) when
-        // labels would otherwise collide on the same owner.
-        std::map<const item *, int> wells_per_owner;
-        std::map<std::pair<const item *, itype_id>, int> mags_per_owner_type;
-        for( const reload_target *rt : matches ) {
-            if( rt->kind == reload_target::kind::well ) {
-                wells_per_owner[rt->owner.get_item()]++;
-            } else {
-                mags_per_owner_type[ {rt->owner.get_item(), rt->target->typeId()}]++;
-            }
-        }
-        std::map<const item *, int> well_counters;
-        std::map<std::pair<const item *, itype_id>, int> mag_counters;
-        uilist menu;
-        menu.text = string_format( _( "Reload which destination on %s?" ),
-                                   loc->display_name() );
-        for( size_t i = 0; i < matches.size(); ++i ) {
-            const reload_target &rt = *matches[i];
-            std::string label;
-            if( rt.kind == reload_target::kind::well ) {
-                int idx = 0;
-                std::string well_desc;
-                for( const item_pocket *p : rt.owner->get_pockets(
-                []( const item_pocket & ) {
-                return true;
-            } ) ) {
-                    if( idx == rt.pocket_index && p->is_type( pocket_type::MAGAZINE_WELL ) ) {
-                        const itype_id default_mag = p->magazine_default();
-                        well_desc = default_mag.is_null()
-                                    ? string_format( _( "magazine well %d" ), rt.ui_well_index + 1 )
-                                    : item::find_type( default_mag )->nname( 1 );
-                        break;
-                    }
-                    ++idx;
-                }
-                label = string_format( _( "%s: %s" ), rt.owner->tname(), well_desc );
-                if( wells_per_owner[rt.owner.get_item()] > 1 ) {
-                    const int n = ++well_counters[rt.owner.get_item()];
-                    //~ %1$s is owner+well description, %2$d is 1-indexed well number on that owner
-                    label = string_format( _( "%1$s (well %2$d)" ), label, n );
-                }
-            } else {
-                //~ %1$s is the gun or gunmod that holds the magazine, %2$s is the magazine's tname
-                label = string_format( _( "%1$s: top up %2$s" ), rt.owner->tname(),
-                                       rt.target->tname() );
-                const std::pair<const item *, itype_id> key { rt.owner.get_item(), rt.target->typeId() };
-                if( mags_per_owner_type[key] > 1 ) {
-                    const int n = ++mag_counters[key];
-                    //~ %1$s is "<owner>: top up <mag name>", %2$d is 1-indexed well number on that owner
-                    label = string_format( _( "%1$s (well %2$d)" ), label, n );
-                }
-            }
-            menu.addentry( static_cast<int>( i ), true, MENU_AUTOASSIGN, label );
-        }
-        menu.query();
-        if( menu.ret < 0 || menu.ret >= static_cast<int>( matches.size() ) ) {
-            return item::reload_option();
-        }
-        match = matches[menu.ret];
-        disambiguated = true;
-    }
-
-    item::reload_option opt( &you, match->target, selected.first, match->pocket_index );
-    if( disambiguated && !inv_s.last_choice_count_player_adjusted() ) {
-        // Refill to the chosen target's own capacity when the seeded count
-        // (from a sibling match) came back unmodified.
-        opt.qty( INT_MAX );
-    } else {
-        opt.qty( selected.second );
-    }
+    item::reload_option opt( &you, target_loc, selected.first );
+    opt.qty( selected.second );
 
     return opt;
 }

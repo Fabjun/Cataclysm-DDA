@@ -77,8 +77,7 @@
     "flags": [ "LASER_SIGHT" ],
     "use_action": {
       "type": "transform",
-      "menu_text": "Turn on flashlight",
-      "msg": "You turn the module's flashlight on.",
+      "msg": "You turn the army flashlight-laser module flashlight on.",
       "target": "mipim_on",
       "need_charges": 1,
       "need_charges_msg": "The batteries are dead."
@@ -103,9 +102,9 @@
     "power_draw": "31 W",
     "revert_to": "mipim",
     "use_action": {
-      "menu_text": "Turn off flashlight",
+      "menu_text": "Turn off",
       "type": "transform",
-      "msg": "You turn the module's flashlight off.",
+      "msg": "You turn the army flashlight-laser module off.",
       "target": "mipim",
       "ammo_scale": 0
     },

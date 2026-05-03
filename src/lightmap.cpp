@@ -780,16 +780,27 @@ void map::generate_lightmap( const int zlev )
     }
 }
 
-void map::add_light_source( const tripoint_bub_ms &p, float luminance,
-                            const light_color_rgb &color )
-{
+void map::add_light_source( const tripoint_bub_ms &p, float luminance, const light_color_rgb &color ) {
+    // LE1: Critical bounds check to prevent SIGSEGV during map edge operations (like tests).
+    // This MUST be the first check before any cache arrays are accessed!
+    if( !inbounds( p ) ) {
+        return;
+    }
+
+    // LE1: Early exit for zero or negative luminance to prevent incorrect energy subtraction.
+    if( luminance <= 0.0f ) {
+        return;
+    }
+
     auto &buf = get_cache( p.z() ).light_source_buffer[p.x()][p.y()];
+    
     if( luminance > buf.luminance ) {
         buf.luminance = luminance;
     }
-    // Color accumulates additively, weighted by luminance so brighter sources
-    // dominate the hue. Luminance itself uses max() for the buffer dedup that
-    // prevents redundant ray casting into neighbors (see apply_light_source).
+    
+    // LE1: Global accumulation of base energy for energy conservation.
+    buf.total_luminance_sum += luminance;
+
     if( color.is_colored() ) {
         buf.color += color * luminance;
     }
@@ -1092,28 +1103,10 @@ void castLight( cata::mdarray<Out, point_bub_ms> &output_cache,
     if( start < end ) {
         return;
     }
-       T last_intensity( 0.0 );
+    T last_intensity( 0.0 );
     tripoint delta;
-
-    // LE3: must have declaration in the outer scope, to keep the loop
-    // for the shrapnel system
-    float radius_sq = 0.0f;
-    [[maybe_unused]] float inv_radius_sq = 0.0f;
-
-    
-    // LE3: isolation the light fade (float)
-    if constexpr( std::is_same_v<T, float> ) {
-        if( numerator > LIGHT_AMBIENT_LOW ) {
-            // LE3: float calculation to block int cut offs for better fades
-             const float exact_radius = -std::log( LIGHT_AMBIENT_LOW / numerator ) * ( 1.0f / LIGHT_TRANSPARENCY_OPEN_AIR );
-            radius_sq = exact_radius * exact_radius;
-            inv_radius_sq = radius_sq > 0.0f ? 1.0f / radius_sq : 0.0f;
-        }
-    }
     for( int distance = row; distance <= radius; distance++ ) {
         delta.y = -distance;
-        // LE3: quadratng the y achses from inner loop
-        const float dy_sq = static_cast<float>( delta.y * delta.y );
         bool started_row = false;
         T current_transparency( 0.0 );
         float away = start - ( -distance + 0.5f ) / ( -distance -
@@ -1143,73 +1136,54 @@ void castLight( cata::mdarray<Out, point_bub_ms> &output_cache,
                                : std::max( std::abs( delta.x ), std::abs( delta.y ) ) ) + offsetDistance;
             last_intensity = calc( numerator, cumulative_transparency, dist );
 
-            // --- KORRIGIERTER SCHRITT 2: WEICHER LICHTAUSKLANG ---
-    // LE3: Lokale Kopie anlegen, um den Basiswert (last_intensity) der Reihe nicht zu zerstören
-    T faded_intensity = last_intensity;
+            T new_transparency = input_array[ current.x ][ current.y ];
 
-    if constexpr( std::is_same_v<T, float> ) {
-        if( inv_radius_sq > 0.0f ) {
-            // dy_sq wurde in der äußeren Schleife vorberechnet
-            const float dist_sq = static_cast<float>( delta.x * delta.x ) + dy_sq;
-            const float fade = std::max( 0.0f, 1.0f - ( dist_sq * inv_radius_sq ) );
-            faded_intensity *= fade;
+            if( check( new_transparency, last_intensity ) ) {
+                update_output( output_cache[current.x][current.y], last_intensity,
+                               quadrant::default_ );
+            } else {
+                update_output( output_cache[current.x][current.y], last_intensity, quad );
+            }
+
+            if constexpr( with_color ) {
+                const light_color_rgb contrib = source_color * last_intensity;
+                auto &cc = ( *color_cache )[current.x][current.y];
+                cc.r = std::max( cc.r, contrib.r );
+                cc.g = std::max( cc.g, contrib.g );
+                cc.b = std::max( cc.b, contrib.b );
+            }
+
+            if( new_transparency == current_transparency ) {
+                newStart = leadingEdge;
+                continue;
+            }
+            // Only cast recursively if previous span was not opaque.
+            if( check( current_transparency, last_intensity ) ) {
+                castLight<xx, xy, yx, yy, T, Out, calc, check, update_output, accumulate, with_color>(
+                    output_cache, input_array, offset, offsetDistance,
+                    numerator, distance + 1, start, trailingEdge,
+                    accumulate( cumulative_transparency, current_transparency, distance ),
+                    source_color, color_cache );
+            }
+            // The new span starts at the leading edge of the previous square if it is opaque,
+            // and at the trailing edge of the current square if it is transparent.
+            if( !check( current_transparency, last_intensity ) ) {
+                start = newStart;
+            } else {
+                // Note this is the same slope as the recursive call we just made.
+                start = trailingEdge;
+            }
+            // Trailing edge ahead of leading edge means this span is fully processed.
+            if( start < end ) {
+                return;
+            }
+            current_transparency = new_transparency;
+            newStart = leadingEdge;
         }
-    }
-    // -----------------------------------------------------
-
-    T new_transparency = input_array[ current.x ][ current.y ];
-
-    // LE3: caches should use the soft  faded_intensity value
-    if( check( new_transparency, faded_intensity ) ) {
-        update_output( output_cache[current.x][current.y], faded_intensity,
-                       quadrant::default_ );
-    } else {
-        update_output( output_cache[current.x][current.y], faded_intensity, quad );
-    }
-
-    if constexpr( with_color ) {
-        const light_color_rgb contrib = source_color * faded_intensity;
-        auto &cc = ( *color_cache )[current.x][current.y];
-        cc.r = std::max( cc.r, contrib.r );
-        cc.g = std::max( cc.g, contrib.g );
-        cc.b = std::max( cc.b, contrib.b );
-    }
-
-    if( new_transparency == current_transparency ) {
-        newStart = leadingEdge;
-        continue;
-    }
-    
-    // LE3: If faded_intensity is to weak,
-    // the engine skips the expensive recursive castLight-call.
-    if( check( current_transparency, faded_intensity ) ) {
-        castLight<xx, xy, yx, yy, T, Out, calc, check, update_output, accumulate, with_color>(
-            output_cache, input_array, offset, offsetDistance,
-            numerator, distance + 1, start, trailingEdge,
-            accumulate( cumulative_transparency, current_transparency, distance ),
-            source_color, color_cache );
-    }
-    
-    if( !check( current_transparency, faded_intensity ) ) {
-        start = newStart;
-    } else {
-        // Note this is the same slope as the recursive call we just made.
-        start = trailingEdge;
-    }
-    
-    // Trailing edge ahead of leading edge means this span is fully processed.
-    if( start < end ) {
-        return;
-    }
-    current_transparency = new_transparency;
-    newStart = leadingEdge;
-}
-// LE3: Outside the loop there has to be the unmodified last_intensity 
-//  to do not break the reach of the general raycast. generelle Reichweite des Raycasts nicht abbricht!
-if( !check( current_transparency, last_intensity ) ) {
-    // If we reach the end of the span with terrain being opaque, we don't iterate further.
-    break;
-}
+        if( !check( current_transparency, last_intensity ) ) {
+            // If we reach the end of the span with terrain being opaque, we don't iterate further.
+            break;
+        }
         // Cumulative average of the transparency values encountered.
         cumulative_transparency = accumulate( cumulative_transparency, current_transparency, distance );
     }
@@ -1470,14 +1444,21 @@ void map::apply_light_source( const tripoint_bub_ms &p, float luminance )
         luminance = 1.49f;
     }
 
-    // Color propagation: the buffer stores accumulated (color * luminance).
+     // Color propagation: the buffer stores accumulated (color * luminance).
     // Dividing by luminance recovers the average color, which castLight then
     // re-scales by the per-tile attenuated intensity -- same falloff as scalar.
     const auto &buf = light_source_buffer[p2.x()][p2.y()];
     const bool has_color = buf.color.is_colored();
     light_color_rgb source_color;
+    
     if( has_color ) {
+        // LE1: Replaces division by base luminance with a division by the total accumulated energy (including white light) to wash out colors.
+        // Contains a safe division guard (> 0.0f) and uses CPU-optimized multiplication by reciprocal.
+        if( buf.total_luminance_sum > 0.0f ) {
+        source_color = buf.color * ( 1.0f / buf.total_luminance_sum );}       else {
         source_color = buf.color * ( 1.0f / buf.luminance );
+}
+        
         // Set source tile color directly
         light_color_cache[p2.x()][p2.y()] += source_color * luminance;
         cache.has_colored_lights = true;

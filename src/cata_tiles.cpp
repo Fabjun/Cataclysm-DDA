@@ -1860,13 +1860,7 @@ void cata_tiles::draw( const point &dest, const tripoint_bub_ms &center, int wid
         // For each row
         const bool iso = is_isometric();
         const level_cache &zlev_cache = here.access_cache( cur_zlevel );
-        // FIXME: colored light tint overlay disabled in isometric mode pending
-        // a non-silhouette implementation. The hybrid mask path requires render
-        // target switches that stall the GPU pipeline, and the simple diamond
-        // path alone does not justify the per-sprite bounds tracking overhead
-        // in the layer loop. Revisit when SDL_gpu or a shader-based tint path
-        // is available.
-        const bool zlev_has_color = zlev_cache.has_colored_lights && !iso;
+        const bool zlev_has_color = zlev_cache.has_colored_lights;
         for( int row = cur_any_tile_range.p_min.y; row < cur_any_tile_range.p_max.y; row ++ ) {
             // --- Per-tile prepass ---
             // Initialize base height and decide which tiles need a colored light
@@ -1906,8 +1900,17 @@ void cata_tiles::draw( const point &dest, const tripoint_bub_ms &center, int wid
                 // Alpha: ratio of saturated energy to total scalar light.
                 // Effect is subtle under bright ambient, vivid in darkness.
                 const float scalar = zlev_cache.lm[p.com.pos.x()][p.com.pos.y()].max();
-                const float ratio = scalar > 0.1f ? std::min( 1.0f, sat_mag / scalar ) : 0.0f;
-                const Uint8 alpha = static_cast<Uint8>( ratio * 80.0f );
+                // LE1: Replaced hard cutoff (std::min) with an asymptotic ratio formula to prevent neon-oversaturation.
+                // Division by zero is protected by the scalar > 0.1f condition.
+                // Float precision note: At extreme saturation values, (sat_mag + scalar) might truncate 
+                // to exactly sat_mag due to 32-bit float limits. This would yield a ratio of exactly 1.0f.
+                const float ratio = scalar > 0.1f ? sat_mag / ( sat_mag + scalar ) : 0.0f;
+
+                // LE1: Increased the alpha multiplier from 80.0f to 100.0f to compensate for the softer blend.
+                // Even if ratio truncates to 1.0f, static_cast<uint8_t>( 1.0f * 100.0f ) evaluates 
+                // to exactly 100. This fits into uint8_t (max 255), meaning this operation 
+                // shpuld be overflow-proof and memory safe.
+                const uint8_t alpha = static_cast<uint8_t>( ratio * 100.0f );
                 if( alpha == 0 ) {
                     continue;
                 }
@@ -3495,13 +3498,13 @@ bool cata_tiles::draw_sprite_at(
         } else if( !iso ) {
             switch( rota % 4 ) {
                 case 1:
-                    render_angle = 90;
+                    render_angle = -90;
                     break;
                 case 2:
                     render_flip = static_cast<CataFlipMode>( SDL_FLIP_HORIZONTAL | SDL_FLIP_VERTICAL );
                     break;
                 case 3:
-                    render_angle = -90;
+                    render_angle = 90;
                     break;
                 default:
                     break;
@@ -3543,7 +3546,7 @@ bool cata_tiles::draw_sprite_at(
 #endif
                     if( !iso ) {
                         // never rotate isometric tiles
-                        ret = sprite_tex->render_copy_ex( renderer, &destination, 90, nullptr,
+                        ret = sprite_tex->render_copy_ex( renderer, &destination, -90, nullptr,
                                                           SDL_FLIP_NONE );
                     } else {
                         ret = sprite_tex->render_copy_ex( renderer, &destination, 0, nullptr,
@@ -3573,7 +3576,7 @@ bool cata_tiles::draw_sprite_at(
 #endif
                     if( !iso ) {
                         // never rotate isometric tiles
-                        ret = sprite_tex->render_copy_ex( renderer, &destination, -90, nullptr,
+                        ret = sprite_tex->render_copy_ex( renderer, &destination, 90, nullptr,
                                                           SDL_FLIP_NONE );
                     } else {
                         ret = sprite_tex->render_copy_ex( renderer, &destination, 0, nullptr,
@@ -4323,7 +4326,7 @@ bool cata_tiles::draw_vpart( const tripoint_bub_ms &p, lit_level ll, int &height
         const vpart_display vd = veh.get_display_of_tile( ovp->mount_pos() );
         if( !vd.id.is_null() ) {
             const int subtile = vd.is_open ? open_ : vd.is_broken ? broken : 0;
-            const int rotation = angle_to_dir4( veh.face.dir() - 270_degrees );
+            const int rotation = angle_to_dir4( 270_degrees - veh.face.dir() );
             avatar &you = get_avatar();
             if( !veh.forward_velocity() && !veh.player_in_control( here, you )
                 && !( you.get_grab_type() == object_type::VEHICLE
@@ -4360,7 +4363,7 @@ bool cata_tiles::draw_vpart( const tripoint_bub_ms &p, lit_level ll, int &height
         if( vp2 ) {
             const char part_mod = std::get<1>( override->second );
             const int subtile = part_mod == 1 ? open_ : part_mod == 2 ? broken : 0;
-            const int rotation = angle_to_dir4( std::get<2>( override->second ) - 270_degrees );
+            const int rotation = angle_to_dir4( 270_degrees - std::get<2>( override->second ) );
             const int draw_highlight = std::get<3>( override->second );
             const std::string vpname = "vp_" + vp2.str();
             // tile overrides are never memorized
@@ -5522,19 +5525,19 @@ void cata_tiles::get_rotation_and_subtile( const char val, const char rot_to, in
             // horizontal end piece E
             subtile = end_piece;
             if( no_rotation ) {
-                rotation = 1;
+                rotation = 3;
                 break;
             }
-            rotation = 1 + 4 * get_rotation_edge_ew( rot_to );
+            rotation = 3 + 4 * get_rotation_edge_ew( rot_to );
             break;
         case 2:
             // horizontal end piece W
             subtile = end_piece;
             if( no_rotation ) {
-                rotation = 3;
+                rotation = 1;
                 break;
             }
-            rotation = 3 + 4 * get_rotation_edge_ew( rot_to );
+            rotation = 1 + 4 * get_rotation_edge_ew( rot_to );
             break;
         case 1:
             // vertical end piece N
@@ -5580,7 +5583,7 @@ void cata_tiles::get_rotation_and_subtile( const char val, const char rot_to, in
             break;
         case 10:
             subtile = corner;
-            rotation = 3;
+            rotation = 1;
             break;
         case 3:
             subtile = corner;
@@ -5588,7 +5591,7 @@ void cata_tiles::get_rotation_and_subtile( const char val, const char rot_to, in
             break;
         case 5:
             subtile = corner;
-            rotation = 1;
+            rotation = 3;
             break;
         // all t_connections
         case 14:
@@ -5597,7 +5600,7 @@ void cata_tiles::get_rotation_and_subtile( const char val, const char rot_to, in
             break;
         case 11:
             subtile = t_connection;
-            rotation = 3;
+            rotation = 1;
             break;
         case 7:
             subtile = t_connection;
@@ -5605,7 +5608,7 @@ void cata_tiles::get_rotation_and_subtile( const char val, const char rot_to, in
             break;
         case 13:
             subtile = t_connection;
-            rotation = 1;
+            rotation = 3;
             break;
     }
 }
@@ -5669,26 +5672,26 @@ int cata_tiles::get_rotation_unconnected( const char rot_to )
             rotation = 2;
             break;
         case static_cast<int>( NEIGHBOUR::EAST ):
-            rotation = 1;
+            rotation = 3;
             break;
         case static_cast<int>( NEIGHBOUR::SOUTH ):
             rotation = 0;
             break;
         case static_cast<int>( NEIGHBOUR::WEST ):
-            rotation = 3;
+            rotation = 1;
             break;
         // Two tiles, resulting in diagonal
         case 10: // NE
             rotation = 6;
             break;
         case 3: // SE
-            rotation = 5;
+            rotation = 7;
             break;
         case 5: // SW
             rotation = 4;
             break;
         case 12: // NW
-            rotation = 7;
+            rotation = 5;
             break;
         // Cases for three tiles to rotate to -> easy
         // Arranged to fallback / modulo to fitting index 0-4
@@ -5696,13 +5699,13 @@ int cata_tiles::get_rotation_unconnected( const char rot_to )
             rotation = 10;
             break;
         case 11: // 3 but west --> modulo = east
-            rotation = 9;
+            rotation = 11;
             break;
         case 7: // 3 but north --> modulo = south
             rotation = 8;
             break;
         case 13: // 3 but east --> modulo = west
-            rotation = 11;
+            rotation = 9;
             break;
         // Two opposing tiles, (No tiles, all tiles; see first cases)
         case 9: // N-S
