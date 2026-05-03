@@ -1860,7 +1860,7 @@ void cata_tiles::draw( const point &dest, const tripoint_bub_ms &center, int wid
         // For each row
         const bool iso = is_isometric();
         const level_cache &zlev_cache = here.access_cache( cur_zlevel );
-        const bool zlev_has_color = zlev_cache.has_colored_lights;
+    const bool zlev_has_color = true; // LE4 DEBUG
         for( int row = cur_any_tile_range.p_min.y; row < cur_any_tile_range.p_max.y; row ++ ) {
             // --- Per-tile prepass ---
             // Initialize base height and decide which tiles need a colored light
@@ -1993,49 +1993,15 @@ void cata_tiles::draw( const point &dest, const tripoint_bub_ms &center, int wid
                     // Iso: flat tint rect over the tile footprint (unchanged
                     // from the original tint overlay code).
                     SetRenderDrawBlendMode( renderer, SDL_BLENDMODE_BLEND );
-                    const level_cache &map_cache = here.access_cache( cur_zlevel );
                     for( const tile_render_info *tp : row_tinted ) {
                         const point screen = player_to_screen( tp->com.pos.xy() );
                         const SDL_Rect draw_rect = {
                             screen.x, screen.y - zlev_base, tile_width, tile_height
                         };
-                          // LE4: Halving tile dimensions based on actual destination rect to support dynamic zoom.
-                const int half_w = draw_rect.w / 2;
-                const int half_h = draw_rect.h / 2;
-                // LE4: Calculating quadrant bounds. Subtraction prevents 1px gaps on odd-sized tiles.
-                const SDL_Rect dest_rect_nw = { draw_rect.x, draw_rect.y, half_w, half_h };
-                const SDL_Rect dest_rect_ne = { draw_rect.x + half_w, draw_rect.y, draw_rect.w - half_w, half_h };
-                const SDL_Rect dest_rect_sw = { draw_rect.x, draw_rect.y + half_h, half_w, draw_rect.h - half_h };
-                const SDL_Rect dest_rect_se = { draw_rect.x + half_w, draw_rect.y + half_h, draw_rect.w - half_w, draw_rect.h - half_h };
-
-                // LE4: Fetch the light color cache to reconstruct sat_mag on the fly
-                
-                const light_color_rgb light_color = map_cache.light_color_cache[tp->com.pos.x()][tp->com.pos.y()];
-                const float sm = std::max({ light_color.r, light_color.g, light_color.b });
-
-                // LE4: Replaces single tile alpha calculation. Retrieves specific quadrant lighting and applies asymptotic ratio.
-                auto alpha_for = [&]( quadrant q ) {
-                    const float s = map_cache.lm[tp->com.pos.x()][tp->com.pos.y()][q];
-                    const float ratio = s > 0.1f ? sm / ( sm + s ) : 0.0f;
-                    return static_cast<Uint8>( ratio * 100.0f );
-                };
-
-                SDL_Color tc = { tp->com.tint_color.r, tp->com.tint_color.g, tp->com.tint_color.b, 0 };
-
-                // LE4: Replaces single tile render call with four separate quadrant render calls.
-                // LE4: Replaces single tile render call with four separate quadrant render calls.
-                // Added emergent Sub-Culling to protect GPU fillrate.
-                tc.a = alpha_for( quadrant::NW );
-                if( tc.a > 0 ) { geometry->rect( renderer, dest_rect_nw, tc ); }
-
-                tc.a = alpha_for( quadrant::NE );
-                if( tc.a > 0 ) { geometry->rect( renderer, dest_rect_ne, tc ); }
-
-                tc.a = alpha_for( quadrant::SW );
-                if( tc.a > 0 ) { geometry->rect( renderer, dest_rect_sw, tc ); }
-
-                tc.a = alpha_for( quadrant::SE );
-                if( tc.a > 0 ) { geometry->rect( renderer, dest_rect_se, tc ); }
+                         const SDL_Color tc = { tp->com.tint_color.r, tp->com.tint_color.g,
+                       tp->com.tint_color.b, tp->com.tint_color.a
+                        };
+                        geometry->rect( renderer, draw_rect, tc );
                     }
                     SetRenderDrawBlendMode( renderer, SDL_BLENDMODE_NONE );
                 } else {
@@ -2124,6 +2090,7 @@ void cata_tiles::draw( const point &dest, const tripoint_bub_ms &center, int wid
                     };
 
                     SetRenderDrawBlendMode( renderer, SDL_BLENDMODE_BLEND );
+                    const level_cache &map_cache = here.access_cache( cur_zlevel );
                     for( const tile_render_info *tp : row_tinted ) {
                         const point screen = player_to_screen( tp->com.pos.xy() );
                         const SDL_Rect tile_rect = {
@@ -2132,22 +2099,33 @@ void cata_tiles::draw( const point &dest, const tripoint_bub_ms &center, int wid
 
                         // Simple: all recorded sprites fit inside the tile rect,
                         // so a flat colored rect matches the sprite extent exactly.
-                        const bool simple = !tp->com.bounds.valid ||
-                                            tp->com.tint_sprites.empty() ||
-                                            ( tp->com.bounds.x >= tile_rect.x &&
-                                              tp->com.bounds.y >= tile_rect.y &&
-                                              tp->com.bounds.x + tp->com.bounds.w <= tile_rect.x + tile_rect.w &&
-                                              tp->com.bounds.y + tp->com.bounds.h <= tile_rect.y + tile_rect.h );
+                        const bool simple = true; // LE4 DEBUG
                         if( simple ) {
-                            // Must flush any pending complex batch before drawing
-                            // a simple tile to preserve correct draw order.
                             flush_tint_batch();
-                            const SDL_Color tc = { tp->com.tint_color.r, tp->com.tint_color.g,
-                                                   tp->com.tint_color.b, tp->com.tint_color.a
-                                                 };
-                            geometry->rect( renderer, tile_rect, tc );
-                            continue;
-                        }
+                            const int half_w = tile_rect.w / 2;
+                            const int half_h = tile_rect.h / 2;
+                            const SDL_Rect dest_rect_nw = { tile_rect.x, tile_rect.y, half_w, half_h };
+                            const SDL_Rect dest_rect_ne = { tile_rect.x + half_w, tile_rect.y, tile_rect.w - half_w, half_h };
+                            const SDL_Rect dest_rect_sw = { tile_rect.x, tile_rect.y + half_h, half_w, tile_rect.h - half_h };
+                            const SDL_Rect dest_rect_se = { tile_rect.x + half_w, tile_rect.y + half_h, tile_rect.w - half_w, tile_rect.h - half_h };
+                            
+                            const float sm = tp->com.tint_color.r / 255.0f + tp->com.tint_color.g / 255.0f + tp->com.tint_color.b / 255.0f;
+                            auto alpha_for = [&]( quadrant q ) {
+                                const float s = map_cache.lm[tp->com.pos.x()][tp->com.pos.y()][q];
+                                const float ratio = s > 0.1f ? sm / ( sm + s ) : 0.0f;
+                                return static_cast<Uint8>( ratio * 100.0f );
+    };
+    SDL_Color tc = { tp->com.tint_color.r, tp->com.tint_color.g, tp->com.tint_color.b, 0 };
+    tc.a = alpha_for( quadrant::NW );
+    if( tc.a > 0 ) { geometry->rect( renderer, dest_rect_nw, tc ); }
+    tc.a = alpha_for( quadrant::NE );
+    if( tc.a > 0 ) { geometry->rect( renderer, dest_rect_ne, tc ); }
+    tc.a = alpha_for( quadrant::SW );
+    if( tc.a > 0 ) { geometry->rect( renderer, dest_rect_sw, tc ); }
+    tc.a = alpha_for( quadrant::SE );
+    if( tc.a > 0 ) { geometry->rect( renderer, dest_rect_se, tc ); }
+    continue;
+}
 
                         // Complex: sprites extend beyond the tile footprint.
                         // Accumulate into the current batch or start a new one.
@@ -2203,6 +2181,33 @@ void cata_tiles::draw( const point &dest, const tripoint_bub_ms &center, int wid
                     }
                     flush_tint_batch();
                     SetRenderDrawBlendMode( renderer, SDL_BLENDMODE_NONE );
+                // LE4: Quadrant tint overlay - independent of the batching system.
+SetRenderDrawBlendMode( renderer, SDL_BLENDMODE_BLEND );
+const level_cache &le4_cache = here.access_cache( cur_zlevel );
+for( const tile_render_info *tp : row_tinted ) {
+    const point screen = player_to_screen( tp->com.pos.xy() );
+    const SDL_Rect tile_rect = { screen.x, screen.y - zlev_base, tile_width, tile_height };
+    const int half_w = tile_rect.w / 2;
+    const int half_h = tile_rect.h / 2;
+    const SDL_Rect dest_rect_nw = { tile_rect.x, tile_rect.y, half_w, half_h };
+    const SDL_Rect dest_rect_ne = { tile_rect.x + half_w, tile_rect.y, tile_rect.w - half_w, half_h };
+    const SDL_Rect dest_rect_sw = { tile_rect.x, tile_rect.y + half_h, half_w, tile_rect.h - half_h };
+    const SDL_Rect dest_rect_se = { tile_rect.x + half_w, tile_rect.y + half_h, tile_rect.w - half_w, tile_rect.h - half_h };
+    SDL_Color tc = { tp->com.tint_color.r, tp->com.tint_color.g, tp->com.tint_color.b, 0 };
+    auto alpha_for = [&]( quadrant q ) -> Uint8 {
+        ( void )q;
+        return 128; // LE4 DEBUG
+    };
+    tc.a = alpha_for( quadrant::NW );
+    if( tc.a > 0 ) { geometry->rect( renderer, dest_rect_nw, tc ); }
+    tc.a = alpha_for( quadrant::NE );
+    if( tc.a > 0 ) { geometry->rect( renderer, dest_rect_ne, tc ); }
+    tc.a = alpha_for( quadrant::SW );
+    if( tc.a > 0 ) { geometry->rect( renderer, dest_rect_sw, tc ); }
+    tc.a = alpha_for( quadrant::SE );
+    if( tc.a > 0 ) { geometry->rect( renderer, dest_rect_se, tc ); }
+}
+SetRenderDrawBlendMode( renderer, SDL_BLENDMODE_NONE );
                 }
             }
         }
