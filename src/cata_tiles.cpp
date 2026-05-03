@@ -2099,32 +2099,19 @@ void cata_tiles::draw( const point &dest, const tripoint_bub_ms &center, int wid
 
                         // Simple: all recorded sprites fit inside the tile rect,
                         // so a flat colored rect matches the sprite extent exactly.
-                        const bool simple = true; // LE4 DEBUG
-                        if( simple ) {
-                            flush_tint_batch();
-                            const int half_w = tile_rect.w / 2;
-                            const int half_h = tile_rect.h / 2;
-                            const SDL_Rect dest_rect_nw = { tile_rect.x, tile_rect.y, half_w, half_h };
-                            const SDL_Rect dest_rect_ne = { tile_rect.x + half_w, tile_rect.y, tile_rect.w - half_w, half_h };
-                            const SDL_Rect dest_rect_sw = { tile_rect.x, tile_rect.y + half_h, half_w, tile_rect.h - half_h };
-                            const SDL_Rect dest_rect_se = { tile_rect.x + half_w, tile_rect.y + half_h, tile_rect.w - half_w, tile_rect.h - half_h };
-                            
-                            const float sm = tp->com.tint_color.r / 255.0f + tp->com.tint_color.g / 255.0f + tp->com.tint_color.b / 255.0f;
-                            auto alpha_for = [&]( quadrant q ) {
-                                const float s = map_cache.lm[tp->com.pos.x()][tp->com.pos.y()][q];
-                                const float ratio = s > 0.1f ? sm / ( sm + s ) : 0.0f;
-                                return static_cast<Uint8>( ratio * 100.0f );
-    };
-    SDL_Color tc = { tp->com.tint_color.r, tp->com.tint_color.g, tp->com.tint_color.b, 0 };
-    tc.a = alpha_for( quadrant::NW );
-    if( tc.a > 0 ) { geometry->rect( renderer, dest_rect_nw, tc ); }
-    tc.a = alpha_for( quadrant::NE );
-    if( tc.a > 0 ) { geometry->rect( renderer, dest_rect_ne, tc ); }
-    tc.a = alpha_for( quadrant::SW );
-    if( tc.a > 0 ) { geometry->rect( renderer, dest_rect_sw, tc ); }
-    tc.a = alpha_for( quadrant::SE );
-    if( tc.a > 0 ) { geometry->rect( renderer, dest_rect_se, tc ); }
-    continue;
+                        const bool simple = !tp->com.bounds.valid ||
+                    tp->com.tint_sprites.empty() ||
+                    ( tp->com.bounds.x >= tile_rect.x &&
+                      tp->com.bounds.y >= tile_rect.y &&
+                      tp->com.bounds.x + tp->com.bounds.w <= tile_rect.x + tile_rect.w &&
+                      tp->com.bounds.y + tp->com.bounds.h <= tile_rect.y + tile_rect.h );
+                    if( simple ) {
+                        flush_tint_batch();
+                        const SDL_Color tc = { tp->com.tint_color.r, tp->com.tint_color.g,
+                           tp->com.tint_color.b, tp->com.tint_color.a
+                         };
+                    geometry->rect( renderer, tile_rect, tc );
+                    continue;
 }
 
                         // Complex: sprites extend beyond the tile footprint.
@@ -2194,10 +2181,12 @@ for( const tile_render_info *tp : row_tinted ) {
     const SDL_Rect dest_rect_sw = { tile_rect.x, tile_rect.y + half_h, half_w, tile_rect.h - half_h };
     const SDL_Rect dest_rect_se = { tile_rect.x + half_w, tile_rect.y + half_h, tile_rect.w - half_w, tile_rect.h - half_h };
     SDL_Color tc = { tp->com.tint_color.r, tp->com.tint_color.g, tp->com.tint_color.b, 0 };
+    const float sm = le4_cache.sm[tp->com.pos.x()][tp->com.pos.y()];
     auto alpha_for = [&]( quadrant q ) -> Uint8 {
-        ( void )q;
-        return 128; // LE4 DEBUG
-    };
+    const float s = le4_cache.lm[tp->com.pos.x()][tp->com.pos.y()][q];
+    const float ratio = s > 0.1f ? sm / ( sm + s ) : 0.0f;
+    return static_cast<Uint8>( ratio * 100.0f );
+};
     tc.a = alpha_for( quadrant::NW );
     if( tc.a > 0 ) { geometry->rect( renderer, dest_rect_nw, tc ); }
     tc.a = alpha_for( quadrant::NE );
