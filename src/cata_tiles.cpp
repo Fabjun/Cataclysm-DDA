@@ -1993,6 +1993,7 @@ void cata_tiles::draw( const point &dest, const tripoint_bub_ms &center, int wid
                     // Iso: flat tint rect over the tile footprint (unchanged
                     // from the original tint overlay code).
                     SetRenderDrawBlendMode( renderer, SDL_BLENDMODE_BLEND );
+                    const level_cache &map_cache = here.access_cache( cur_zlevel );
                     for( const tile_render_info *tp : row_tinted ) {
                         const point screen = player_to_screen( tp->com.pos.xy() );
                         const SDL_Rect draw_rect = {
@@ -2001,7 +2002,6 @@ void cata_tiles::draw( const point &dest, const tripoint_bub_ms &center, int wid
                           // LE4: Halving tile dimensions based on actual destination rect to support dynamic zoom.
                 const int half_w = draw_rect.w / 2;
                 const int half_h = draw_rect.h / 2;
-
                 // LE4: Calculating quadrant bounds. Subtraction prevents 1px gaps on odd-sized tiles.
                 const SDL_Rect dest_rect_nw = { draw_rect.x, draw_rect.y, half_w, half_h };
                 const SDL_Rect dest_rect_ne = { draw_rect.x + half_w, draw_rect.y, draw_rect.w - half_w, half_h };
@@ -2009,7 +2009,7 @@ void cata_tiles::draw( const point &dest, const tripoint_bub_ms &center, int wid
                 const SDL_Rect dest_rect_se = { draw_rect.x + half_w, draw_rect.y + half_h, draw_rect.w - half_w, draw_rect.h - half_h };
 
                 // LE4: Fetch the light color cache to reconstruct sat_mag on the fly
-                const level_cache &map_cache = get_map().get_cache( tp->com.pos.z() );
+                
                 const light_color_rgb light_color = map_cache.light_color_cache[tp->com.pos.x()][tp->com.pos.y()];
                 const float sm = std::max({ light_color.r, light_color.g, light_color.b });
 
@@ -2023,17 +2023,19 @@ void cata_tiles::draw( const point &dest, const tripoint_bub_ms &center, int wid
                 SDL_Color tc = { tp->com.tint_color.r, tp->com.tint_color.g, tp->com.tint_color.b, 0 };
 
                 // LE4: Replaces single tile render call with four separate quadrant render calls.
+                // LE4: Replaces single tile render call with four separate quadrant render calls.
+                // Added emergent Sub-Culling to protect GPU fillrate.
                 tc.a = alpha_for( quadrant::NW );
-                geometry->rect( renderer, dest_rect_nw, tc );
+                if( tc.a > 0 ) { geometry->rect( renderer, dest_rect_nw, tc ); }
 
                 tc.a = alpha_for( quadrant::NE );
-                geometry->rect( renderer, dest_rect_ne, tc );
+                if( tc.a > 0 ) { geometry->rect( renderer, dest_rect_ne, tc ); }
 
                 tc.a = alpha_for( quadrant::SW );
-                geometry->rect( renderer, dest_rect_sw, tc );
+                if( tc.a > 0 ) { geometry->rect( renderer, dest_rect_sw, tc ); }
 
                 tc.a = alpha_for( quadrant::SE );
-                geometry->rect( renderer, dest_rect_se, tc );
+                if( tc.a > 0 ) { geometry->rect( renderer, dest_rect_se, tc ); }
                     }
                     SetRenderDrawBlendMode( renderer, SDL_BLENDMODE_NONE );
                 } else {
