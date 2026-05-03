@@ -11,7 +11,6 @@
 #include "map.h"
 #include "map_helpers.h"
 #include "monster.h"
-#include "monster_helpers.h"
 #include "point.h"
 #include "type_id.h"
 
@@ -85,8 +84,14 @@ static std::set<int> run_creature_in_tower( map &here, const point_bub_ms &tower
     visited_z.insert( mon.posz() );
 
     for( int turn = 0; turn < turns; ++turn ) {
-        move_monster_turn( mon );
-        visited_z.insert( mon.posz() );
+        // Inline move_monster_turn so we sample posz after every internal mon.move().
+        // A fast monster can climb to dest and stumble back within one turn, so a
+        // per-turn snapshot would miss the moment it stood on the destination z.
+        mon.mod_moves( mon.get_speed() );
+        while( mon.get_moves() > 0 ) {
+            mon.move();
+            visited_z.insert( mon.posz() );
+        }
     }
 
     g->remove_zombie( mon );
@@ -283,8 +288,11 @@ TEST_CASE( "wandering_creature_traverses_three_story_tower", "[monster][z-level]
 
     constexpr int budget_turns = 1000;
     for( int turn = 0; turn < budget_turns; ++turn ) {
-        move_monster_turn( mon );
-        visited_z.insert( mon.posz() );
+        mon.mod_moves( mon.get_speed() );
+        while( mon.get_moves() > 0 ) {
+            mon.move();
+            visited_z.insert( mon.posz() );
+        }
     }
 
     g->remove_zombie( mon );

@@ -3088,6 +3088,12 @@ void item::io( Archive &archive )
         return !f.is_valid();
     } );
 
+    hot_flags_own = 0;
+    const item::FlagsSetType &owned = item_tags;
+    for( const flag_id &f : owned ) {
+        hot_flags_own |= hot_bit_for( f );
+    }
+
     if( note_read ) {
         snip_id = SNIPPET.migrate_hash_to_id( note );
     } else {
@@ -3848,6 +3854,7 @@ void faction::deserialize( const JsonObject &jo )
     jo.read( "known_by_u", known_by_u );
     jo.read( "size", size );
     jo.read( "power", power );
+    jo.read( "steal_persist", steal_persist );
     if( jo.has_int( "food_supply" ) ) {
         int calories;
         // Legacy kcal value found, migrate to calories
@@ -3882,6 +3889,7 @@ void faction::serialize( JsonOut &json ) const
     json.member( "known_by_u", known_by_u );
     json.member( "size", size );
     json.member( "power", power );
+    json.member( "steal_persist", steal_persist );
     // pruned version of the food supply
     cata::list<std::pair<time_point, nutrients>> pruned_food_supply = _food_supply;
     for( auto it = pruned_food_supply.begin(); it != pruned_food_supply.end(); ) {
@@ -4181,7 +4189,7 @@ void mm_submap::deserialize( int version, const JsonArray &ja )
                             // legacy vehicle rotation needs to be converted from 0-360 degrees
                             // to 0-3 tileset rotation
                             const units::angle legacy_angle = units::from_degrees( legacy_rotation );
-                            tile.set_dec_rotation( angle_to_dir4( 270_degrees - legacy_angle ) );
+                            tile.set_dec_rotation( angle_to_dir4( legacy_angle - 270_degrees ) );
                         } else {
                             tile.set_dec_rotation( legacy_rotation );
                         }
