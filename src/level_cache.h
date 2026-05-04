@@ -45,10 +45,15 @@ struct level_cache {
             float luminance = 0.0f;
             light_color_rgb color;
 
-        // LE1: Added to track the combined energy of all light sources, including white light.
-        // LE1: Serves as the mathematical divisor for physically correct color desaturation.
+            // LE1: Added to track the combined energy of all light sources, including white light.
+            // LE1: Serves as the mathematical divisor for physically correct color desaturation.
             float total_luminance_sum = 0.0f;
-};
+
+            // LE2: Tracks energy from colored sources only (accumulated inside the color guard).
+            // LE2: Provides the correct normalization base for the weighted color direction vector.
+            // LE2: Kept separate from total_luminance_sum so white light desaturation remains intact.
+            float color_luminance_sum = 0.0f;
+        };
         cata::mdarray<buffered_light_source, point_bub_ms> light_source_buffer;
 
         // Cache of natural light level is useful if it needs to be in sync with the light cache.
