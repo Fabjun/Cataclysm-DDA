@@ -802,7 +802,11 @@ void map::add_light_source( const tripoint_bub_ms &p, float luminance, const lig
     buf.total_luminance_sum += luminance;
 
     if( color.is_colored() ) {
+        // LE2: Luminance-weighted color accumulation: stronger sources dominate the blend.
         buf.color += color * luminance;
+        // LE2: color_luminance_sum accumulated strictly inside the color guard so white
+        // LE2: light does not inflate it — keeps color direction normalization clean.
+        buf.color_luminance_sum += luminance;
     }
 }
 
@@ -1138,12 +1142,8 @@ void castLight( cata::mdarray<Out, point_bub_ms> &output_cache,
 
             T new_transparency = input_array[ current.x ][ current.y ];
 
-            if( check( new_transparency, last_intensity ) ) {
-                update_output( output_cache[current.x][current.y], last_intensity,
-                               quadrant::default_ );
-            } else {
-                update_output( output_cache[current.x][current.y], last_intensity, quad );
-            }
+            // LE4: Always use directed quad for all tiles to enable sub-tile shadows.
+            update_output( output_cache[current.x][current.y], last_intensity, quad );
 
             if constexpr( with_color ) {
                 const light_color_rgb contrib = source_color * last_intensity;
@@ -1444,22 +1444,23 @@ void map::apply_light_source( const tripoint_bub_ms &p, float luminance )
         luminance = 1.49f;
     }
 
-     // Color propagation: the buffer stores accumulated (color * luminance).
-    // Dividing by luminance recovers the average color, which castLight then
-    // re-scales by the per-tile attenuated intensity -- same falloff as scalar.
+    // LE2: Color propagation: buf.color holds sum(color_i * luminance_i) for colored sources.
+    // LE2: Dividing by total_luminance_sum (all light, incl. white) desaturates correctly.
+    // LE2: color_luminance_sum guards the has_color check — non-zero only when colored
+    // LE2: sources contributed, preventing false positives from white-only tiles.
     const auto &buf = light_source_buffer[p2.x()][p2.y()];
-    const bool has_color = buf.color.is_colored();
+    const bool has_color = buf.color_luminance_sum > 0.0f;
     light_color_rgb source_color;
-    
+
     if( has_color ) {
-        // LE1: Replaces division by base luminance with a division by the total accumulated energy (including white light) to wash out colors.
-        // Contains a safe division guard (> 0.0f) and uses CPU-optimized multiplication by reciprocal.
-        if( buf.total_luminance_sum > 0.0f ) {
-        source_color = buf.color * ( 1.0f / buf.total_luminance_sum );}       else {
-        source_color = buf.color * ( 1.0f / buf.luminance );
-}
-        
-        // Set source tile color directly
+        // LE2: total_luminance_sum is the correct divisor: it includes white light so
+        // LE2: bright ambient correctly washes the color toward white (physical desaturation).
+        // LE2: Fallback to color_luminance_sum when no white light is present.
+        const float divisor = buf.total_luminance_sum > 0.0f
+                              ? buf.total_luminance_sum
+                              : buf.color_luminance_sum;
+        source_color = buf.color * ( 1.0f / divisor );
+
         light_color_cache[p2.x()][p2.y()] += source_color * luminance;
         cache.has_colored_lights = true;
     }
@@ -1712,7 +1713,7 @@ void map::apply_light_ray(
                     // Multiple rays will pass through the same squares so we need to record that
                     lit[p.x()][p.y()] = true;
                     float lm_val = luminance / ( fastexp( transparency * distance ) * distance );
-                    quadrant q = is_opaque ? quad : quadrant::default_;
+                    quadrant q = quad;
                     lm[p.x()][p.y()][q] = std::max( lm[p.x()][p.y()][q], lm_val );
                 }
                 if( is_opaque ) {
@@ -1744,7 +1745,7 @@ void map::apply_light_ray(
                     // Multiple rays will pass through the same squares so we need to record that
                     lit[p.x()][p.y()] = true;
                     float lm_val = luminance / ( fastexp( transparency * distance ) * distance );
-                    quadrant q = is_opaque ? quad : quadrant::default_;
+                    quadrant q = quad;
                     lm[p.x()][p.y()][q] = std::max( lm[p.x()][p.y()][q], lm_val );
                 }
                 if( is_opaque ) {

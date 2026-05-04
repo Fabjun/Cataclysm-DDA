@@ -1860,7 +1860,7 @@ void cata_tiles::draw( const point &dest, const tripoint_bub_ms &center, int wid
         // For each row
         const bool iso = is_isometric();
         const level_cache &zlev_cache = here.access_cache( cur_zlevel );
-    const bool zlev_has_color = true; // LE4 DEBUG
+        const bool zlev_has_color = zlev_cache.has_colored_lights;
         for( int row = cur_any_tile_range.p_min.y; row < cur_any_tile_range.p_max.y; row ++ ) {
             // --- Per-tile prepass ---
             // Initialize base height and decide which tiles need a colored light
@@ -1874,7 +1874,6 @@ void cata_tiles::draw( const point &dest, const tripoint_bub_ms &center, int wid
                 if( !zlev_has_color ) {
                     continue;
                 }
-                // Only visible sprite tiles can receive a tint.
                 const tile_render_info::sprite *const
                 var = std::get_if<tile_render_info::sprite>( &p.var );
                 if( !var || var->ll == lit_level::DARK || var->ll == lit_level::BLANK ||
@@ -1886,9 +1885,6 @@ void cata_tiles::draw( const point &dest, const tripoint_bub_ms &center, int wid
                 if( !lc.is_colored() ) {
                     continue;
                 }
-                // Isolate the chromatic (saturated) component by subtracting
-                // the achromatic floor (min channel). Pure white light (equal
-                // RGB) produces zero saturation and no tint.
                 const float min_ch = std::min( { lc.r, lc.g, lc.b } );
                 const float sat_r = lc.r - min_ch;
                 const float sat_g = lc.g - min_ch;
@@ -1897,24 +1893,12 @@ void cata_tiles::draw( const point &dest, const tripoint_bub_ms &center, int wid
                 if( sat_mag < 0.01f ) {
                     continue;
                 }
-                // Alpha: ratio of saturated energy to total scalar light.
-                // Effect is subtle under bright ambient, vivid in darkness.
                 const float scalar = zlev_cache.lm[p.com.pos.x()][p.com.pos.y()].max();
-                // LE1: Replaced hard cutoff (std::min) with an asymptotic ratio formula to prevent neon-oversaturation.
-                // Division by zero is protected by the scalar > 0.1f condition.
-                // Float precision note: At extreme saturation values, (sat_mag + scalar) might truncate 
-                // to exactly sat_mag due to 32-bit float limits. This would yield a ratio of exactly 1.0f.
                 const float ratio = scalar > 0.1f ? sat_mag / ( sat_mag + scalar ) : 0.0f;
-
-                // LE1: Increased the alpha multiplier from 80.0f to 100.0f to compensate for the softer blend.
-                // Even if ratio truncates to 1.0f, static_cast<uint8_t>( 1.0f * 100.0f ) evaluates 
-                // to exactly 100. This fits into uint8_t (max 255), meaning this operation 
-                // shpuld be overflow-proof and memory safe.
                 const uint8_t alpha = static_cast<uint8_t>( ratio * 100.0f );
                 if( alpha == 0 ) {
                     continue;
                 }
-                // Normalize saturated color to full brightness for the SDL tint.
                 p.com.tint_color = {
                     static_cast<Uint8>( sat_r / sat_mag * 255.0f ),
                     static_cast<Uint8>( sat_g / sat_mag * 255.0f ),
@@ -1923,8 +1907,6 @@ void cata_tiles::draw( const point &dest, const tripoint_bub_ms &center, int wid
                 };
                 p.com.needs_tint = true;
                 row_tinted.push_back( &p );
-                // Ortho tiles need bounds tracking and sprite recording for the
-                // silhouette mask path. Reset per-frame state here.
                 if( !iso ) {
                     p.com.bounds = {};
                     p.com.tint_sprites.clear();
@@ -2090,7 +2072,6 @@ void cata_tiles::draw( const point &dest, const tripoint_bub_ms &center, int wid
                     };
 
                     SetRenderDrawBlendMode( renderer, SDL_BLENDMODE_BLEND );
-                    const level_cache &map_cache = here.access_cache( cur_zlevel );
                     for( const tile_render_info *tp : row_tinted ) {
                         const point screen = player_to_screen( tp->com.pos.xy() );
                         const SDL_Rect tile_rect = {
@@ -2168,35 +2149,69 @@ void cata_tiles::draw( const point &dest, const tripoint_bub_ms &center, int wid
                     }
                     flush_tint_batch();
                     SetRenderDrawBlendMode( renderer, SDL_BLENDMODE_NONE );
-                // LE4: Quadrant tint overlay - independent of the batching system.
-SetRenderDrawBlendMode( renderer, SDL_BLENDMODE_BLEND );
-const level_cache &le4_cache = here.access_cache( cur_zlevel );
-for( const tile_render_info *tp : row_tinted ) {
-    const point screen = player_to_screen( tp->com.pos.xy() );
-    const SDL_Rect tile_rect = { screen.x, screen.y - zlev_base, tile_width, tile_height };
-    const int half_w = tile_rect.w / 2;
-    const int half_h = tile_rect.h / 2;
-    const SDL_Rect dest_rect_nw = { tile_rect.x, tile_rect.y, half_w, half_h };
-    const SDL_Rect dest_rect_ne = { tile_rect.x + half_w, tile_rect.y, tile_rect.w - half_w, half_h };
-    const SDL_Rect dest_rect_sw = { tile_rect.x, tile_rect.y + half_h, half_w, tile_rect.h - half_h };
-    const SDL_Rect dest_rect_se = { tile_rect.x + half_w, tile_rect.y + half_h, tile_rect.w - half_w, tile_rect.h - half_h };
-    SDL_Color tc = { tp->com.tint_color.r, tp->com.tint_color.g, tp->com.tint_color.b, 0 };
-    const float sm = le4_cache.sm[tp->com.pos.x()][tp->com.pos.y()];
-    auto alpha_for = [&]( quadrant q ) -> Uint8 {
-    const float s = le4_cache.lm[tp->com.pos.x()][tp->com.pos.y()][q];
-    const float ratio = s > 0.1f ? sm / ( sm + s ) : 0.0f;
-    return static_cast<Uint8>( ratio * 100.0f );
-};
-    tc.a = alpha_for( quadrant::NW );
-    if( tc.a > 0 ) { geometry->rect( renderer, dest_rect_nw, tc ); }
-    tc.a = alpha_for( quadrant::NE );
-    if( tc.a > 0 ) { geometry->rect( renderer, dest_rect_ne, tc ); }
-    tc.a = alpha_for( quadrant::SW );
-    if( tc.a > 0 ) { geometry->rect( renderer, dest_rect_sw, tc ); }
-    tc.a = alpha_for( quadrant::SE );
-    if( tc.a > 0 ) { geometry->rect( renderer, dest_rect_se, tc ); }
-}
-SetRenderDrawBlendMode( renderer, SDL_BLENDMODE_NONE );
+                // LE4: Per-quadrant colored light tint overlay.
+                // LE4: Renders each tile's colored light as four separate corner rects,
+                // LE4: weighted by the directional lm data to create soft in-tile shadows.
+                if( !row_tinted.empty() ) {
+                    const level_cache &le4_cache = here.access_cache( cur_zlevel );
+                    SetRenderDrawBlendMode( renderer, SDL_BLENDMODE_BLEND );
+                    creature_tracker &le4_creatures = get_creature_tracker();
+                    for( const tile_render_info *tp : row_tinted ) {
+                        // LE4: Only shade tiles that have a 3D object — furniture, items, or
+                        // LE4: creatures. Plain terrain/floor tiles cast no shadow.
+                        const bool has_object =
+                            here.furn( tp->com.pos ) != furn_str_id::NULL_ID().id() ||
+                            !here.i_at( tp->com.pos ).empty() ||
+                            le4_creatures.creature_at( tp->com.pos, true ) != nullptr;
+                        if( !has_object ) {
+                            continue;
+                        }
+
+                        const point screen = player_to_screen( tp->com.pos.xy() );
+                        const SDL_Rect tile_rect = {
+                            screen.x, screen.y - zlev_base, tile_width, tile_height
+                        };
+                        const int half_w = tile_rect.w / 2;
+                        const int half_h = tile_rect.h / 2;
+
+                        // LE4: Screen rects for each quadrant corner (NE=0, SE=1, SW=2, NW=3).
+                        const SDL_Rect quad_rects[4] = {
+                            { tile_rect.x + half_w, tile_rect.y,            tile_rect.w - half_w, half_h               }, // LE4: NE
+                            { tile_rect.x + half_w, tile_rect.y + half_h,   tile_rect.w - half_w, tile_rect.h - half_h }, // LE4: SE
+                            { tile_rect.x,          tile_rect.y + half_h,   half_w,               tile_rect.h - half_h }, // LE4: SW
+                            { tile_rect.x,          tile_rect.y,            half_w,               half_h               }, // LE4: NW
+                        };
+
+                        // LR1: Compute sat_mag from light_color_cache on-the-fly per tile.
+                        // LR1: sat_mag drives the asymptotic ratio formula as the shadow magnitude.
+                        const light_color_rgb &lc =
+                            le4_cache.light_color_cache[tp->com.pos.x()][tp->com.pos.y()];
+                        const float min_ch = std::min( { lc.r, lc.g, lc.b } );
+                        const float sat_mag = std::max( { lc.r - min_ch, lc.g - min_ch, lc.b - min_ch } );
+                        if( sat_mag < 0.01f ) {
+                            continue;
+                        }
+
+                        const four_quadrants &quads =
+                            le4_cache.lm[tp->com.pos.x()][tp->com.pos.y()];
+                        for( int qi = 0; qi < 4; qi++ ) {
+                            const float scalar_q = quads[static_cast<quadrant>( qi )];
+                            // LR1: Asymptotic ratio replaces hard cutoff: sat_mag / (sat_mag + scalar_q).
+                            // LR1: Guarantees ratio stays in [0, 1) regardless of sat_mag magnitude.
+                            // LR1: Low scalar_q (shadow side) → ratio near 1 → more darkness.
+                            // LR1: High scalar_q (lit side)   → ratio near 0 → less darkness.
+                            // LR1: Multiplier raised from 80.0f to 100.0f to compensate for softer curve.
+                            const float ratio = scalar_q > 0.1f ? sat_mag / ( sat_mag + scalar_q ) : 0.0f;
+                            const Uint8 alpha = static_cast<Uint8>( ratio * 100.0f );
+                            if( alpha == 0 ) {
+                                continue;
+                            }
+                            const SDL_Color tc = { 0, 0, 0, alpha };
+                            geometry->rect( renderer, quad_rects[qi], tc );
+                        }
+                    }
+                    SetRenderDrawBlendMode( renderer, SDL_BLENDMODE_NONE );
+                }
                 }
             }
         }
