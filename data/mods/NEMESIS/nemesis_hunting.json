@@ -1,0 +1,49 @@
+[
+  {
+    "//": "NEMESIS_MARK — zero-cost technical marker mutation applied to every Nemesis NPC via its npc_class definition. Has no gameplay effect of its own (points: 0, purifiable: false, valid: false so it never appears in character creation). Its sole purpose is to identify Nemesis NPCs reliably in the EOC system without per-character listener EOCs. Two global EOCs query it: EOC_NEMESIS_REVENGE_TRIGGER uses 'u_has_trait: NEMESIS_MARK' to arm a Nemesis into HUNTING mode when the player hits it; EOC_NEMESIS_TRACKER uses the same condition to split its RECURRING logic between the player (false_effect branch) and all Nemesis NPCs (effect branch), allowing one shared EOC to drive the entire hunt system for an arbitrary number of active Nemeses.",
+    "type": "mutation",
+    "id": "NEMESIS_MARK",
+    "name": { "str": "Nemesis" },
+    "description": "This entity has returned from death with purpose.",
+    "points": 0,
+    "purifiable": false,
+    "starting_trait": false,
+    "valid": false
+  },
+  {
+    "//": "NEMESIS_HUNTING — active pursuit state effect. Applied permanently to a Nemesis NPC by EOC_NEMESIS_REVENGE_TRIGGER when the player hits that Nemesis. While this effect is active, EOC_NEMESIS_TRACKER's hunt branch runs every 60 minutes for the NPC. HOT trail (score >= threshold, or NPC is very close): updates last-known position, calls u_set_goal toward the player, shrinks NEMESIS_OVR_DIST intensity, decreases NEMESIS_FRUSTRATION. COLD trail: wanders within NEMESIS_OVR_DIST radius, increases NEMESIS_FRUSTRATION each tick. GIVE UP (NEMESIS_FRUSTRATION * 2 >= INT + PER): removes NEMESIS_HUNTING and queues an ambush warning. Removing this effect does not destroy the NPC; it can be re-armed by hitting the Nemesis again.",
+    "type": "effect_type",
+    "id": "NEMESIS_HUNTING",
+    "name": [ { "str": "Hunting" } ],
+    "desc": [ { "str": "This Nemesis is actively hunting its prey." } ]
+  },
+  {
+    "//": "NEMESIS_OVR_DIST — overmap search radius in OMT units, stored as effect intensity. Written by EOC_NEMESIS_REVENGE_TRIGGER (sets intensity to _OVR_DIST_START = 30 when hunt begins) and EOC_NEMESIS_TRACKER (shrinks by _OVR_DIST_SHRINK = 3 on each hot-trail tick toward floor _OVR_DIST_MIN = 2). On cold-trail ticks, the current intensity is used as the random x/y wander jitter around the last-known player position. max_intensity of 100 is a safety cap well above the starting value of 30 to prevent runaway values from arithmetic errors.",
+    "type": "effect_type",
+    "id": "NEMESIS_OVR_DIST",
+    "name": [ { "str": "Tracking" } ],
+    "desc": [ { "str": "Current overmap search radius (OMT units) for this Nemesis." } ],
+    "max_intensity": 100
+  },
+  {
+    "//": "NEMESIS_FRUSTRATION — consecutive cold-trail tick counter, stored as effect intensity. Increased by _FRUSTRATION_INCR (1) each cold-trail tick, decreased by _FRUSTRATION_DECR (2) each hot-trail tick (recovery is faster than accumulation so a brief hot trail prevents immediate give-up). Give-up condition: intensity * 2 >= u_val('intelligence') + u_val('perception'). A smarter, more perceptive Nemesis tolerates far more cold ticks before giving up, making high-stat Nemeses significantly more persistent than weak ones. max_intensity of 200 covers the highest realistic INT+PER sum a Nemesis could have.",
+    "type": "effect_type",
+    "id": "NEMESIS_FRUSTRATION",
+    "name": [ { "str": "Frustrated" } ],
+    "desc": [ { "str": "Consecutive cold-trail ticks accumulated by this Nemesis." } ],
+    "max_intensity": 200
+  },
+  {
+    "//": "NEMESIS_AMBUSH — post-give-up ambush state marker, stored as a permanent effect with intensity 1. Applied by EOC_NEMESIS_TRACKER when NEMESIS_FRUSTRATION overflows the give-up threshold (frustration * 2 >= INT + PER). While this effect is active, the tracker runs a reduced-range proximity check (5 OMTs via NEMESIS_OVR_DIST set to 5) instead of the full hunt loop. If the player enters that radius, the effect is removed and NEMESIS_HUNTING is re-added — the Nemesis resumes active pursuit. This distinguishes post-give-up Nemeses from ones that have never been triggered, allowing different behaviour for each state. The hit-based re-trigger (EOC_NEMESIS_REVENGE_TRIGGER) also remains active while in ambush; a player who strikes the Nemesis during ambush re-arms the hunt immediately regardless of proximity.",
+    "type": "effect_type",
+    "id": "NEMESIS_AMBUSH",
+    "name": [ { "str": "Ambushing" } ],
+    "desc": [ { "str": "This Nemesis has broken off active pursuit and is lying in wait." } ]
+  },
+  {
+    "//": "morale_nemesis_justice — morale type awarded to the player on confirming a Nemesis kill. Displayed in the morale window as 'Defeated a Nemesis'. Granted by EOC_NEMESIS_DEATH_NOTIFY_<name> alongside the kill message. Bonus: +20, decay starts at 3 hours, expires at 6 hours — a meaningful but temporary sense of relief, not a permanent buff.",
+    "id": "morale_nemesis_justice",
+    "type": "morale_type",
+    "text": "Defeated a Nemesis"
+  }
+]

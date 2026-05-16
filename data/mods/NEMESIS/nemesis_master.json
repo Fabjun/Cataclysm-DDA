@@ -1,0 +1,989 @@
+[
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_MASTER",
+    "eoc_type": "EVENT",
+    "required_event": "avatar_enters_omt",
+    "condition": {
+      "one_in_chance": 1
+    },
+    "effect": [
+      {
+        "math": [
+          "global_nemesis_spawn_lock = 0"
+        ]
+      },
+      {
+        "if": {
+          "math": [
+            "time('now') % time('364 days') >= time('0 days')"
+          ]
+        },
+        "then": {
+          "run_eocs": [
+            "EOC_HUB_364Y_0000D"
+          ]
+        }
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_DEATH_RELAY",
+    "eoc_type": "EVENT",
+    "required_event": "avatar_enters_omt",
+    "effect": [
+      {
+        "run_eocs": [
+          "EOC_NEMESIS_DEATH_NOTIFY_alice_martin_0000"
+        ]
+      },
+      {
+        "run_eocs": [
+          "EOC_NEMESIS_DEATH_NOTIFY_bob_smith_0002"
+        ]
+      },
+      {
+        "run_eocs": [
+          "EOC_NEMESIS_DEATH_NOTIFY_kent_lee_0004"
+        ]
+      },
+      {
+        "run_eocs": [
+          "EOC_NEMESIS_DEATH_NOTIFY_lynch_jones_0007"
+        ]
+      },
+      {
+        "run_eocs": [
+          "EOC_NEMESIS_DEATH_NOTIFY_marco_harris_0006"
+        ]
+      },
+      {
+        "run_eocs": [
+          "EOC_NEMESIS_DEATH_NOTIFY_ragnarok_lee_0009"
+        ]
+      },
+      {
+        "run_eocs": [
+          "EOC_NEMESIS_DEATH_NOTIFY_sam_williams_0001"
+        ]
+      },
+      {
+        "run_eocs": [
+          "EOC_NEMESIS_DEATH_NOTIFY_tara_lee_0003"
+        ]
+      },
+      {
+        "run_eocs": [
+          "EOC_NEMESIS_DEATH_NOTIFY_viper_anderson_0008"
+        ]
+      },
+      {
+        "run_eocs": [
+          "EOC_NEMESIS_DEATH_NOTIFY_wade_brown_0005"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_FLAG_MELEE_CHAR",
+    "eoc_type": "EVENT",
+    "required_event": "character_melee_attacks_character",
+    "condition": "u_is_avatar",
+    "effect": [
+      {
+        "math": [
+          "global_player_just_attacked = 1"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_FLAG_MELEE_MON",
+    "eoc_type": "EVENT",
+    "required_event": "character_melee_attacks_monster",
+    "condition": "u_is_avatar",
+    "effect": [
+      {
+        "math": [
+          "global_player_just_attacked = 1"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_FLAG_RANGED_CHAR",
+    "eoc_type": "EVENT",
+    "required_event": "character_ranged_attacks_character",
+    "condition": "u_is_avatar",
+    "effect": [
+      {
+        "math": [
+          "global_player_just_attacked = 1"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_FLAG_RANGED_MON",
+    "eoc_type": "EVENT",
+    "required_event": "character_ranged_attacks_monster",
+    "condition": "u_is_avatar",
+    "effect": [
+      {
+        "math": [
+          "global_player_just_attacked = 1"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_REVENGE_TRIGGER",
+    "eoc_type": "EVENT",
+    "required_event": "character_takes_damage",
+    "condition": {
+      "and": [
+        {
+          "u_has_trait": "NEMESIS_MARK"
+        },
+        {
+          "not": {
+            "u_has_effect": "NEMESIS_HUNTING"
+          }
+        },
+        {
+          "math": [
+            "global_player_just_attacked == 1"
+          ]
+        }
+      ]
+    },
+    "effect": [
+      {
+        "u_add_effect": "NEMESIS_HUNTING",
+        "duration": "PERMANENT"
+      },
+      {
+        "u_add_effect": "NEMESIS_OVR_DIST",
+        "duration": "PERMANENT",
+        "intensity": 30
+      },
+      {
+        "u_lose_effect": "NEMESIS_FRUSTRATION"
+      },
+      {
+        "u_location_variable": {
+          "u_val": "nemesis_last_tracked_pos"
+        },
+        "min_radius": 0,
+        "max_radius": 0
+      },
+      {
+        "math": [
+          "global_player_just_attacked = 0"
+        ]
+      },
+      {
+        "math": [
+          "global_nemesis_hunt_pending = global_nemesis_hunt_pending + 1"
+        ]
+      },
+      {
+        "math": [
+          "global_nemesis_battlecry_pending = global_nemesis_battlecry_pending + 1"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_HUNT_ANNOUNCER",
+    "eoc_type": "RECURRING",
+    "global": true,
+    "recurrence": [
+      "1 minutes",
+      "1 minutes"
+    ],
+    "effect": [
+      {
+        "math": [
+          "global_player_just_attacked = 0"
+        ]
+      },
+      {
+        "if": {
+          "math": [
+            "global_nemesis_hunt_pending >= 1"
+          ]
+        },
+        "then": [
+          {
+            "u_message": "<color_red>You feel an ominous presence — something from your past is hunting you.</color>",
+            "type": "bad"
+          },
+          {
+            "math": [
+              "global_nemesis_hunt_pending = global_nemesis_hunt_pending - 1"
+            ]
+          }
+        ]
+      },
+      {
+        "if": {
+          "math": [
+            "global_nemesis_battlecry_pending >= 1"
+          ]
+        },
+        "then": [
+          {
+            "u_message": "<color_red>A voice cuts through the air: \"You will pay for what you've done!\"</color>",
+            "type": "bad"
+          },
+          {
+            "math": [
+              "global_nemesis_battlecry_pending = global_nemesis_battlecry_pending - 1"
+            ]
+          }
+        ]
+      },
+      {
+        "if": {
+          "math": [
+            "global_nemtrack_msg_pending >= 1"
+          ]
+        },
+        "then": [
+          {
+            "u_message": "<color_yellow>A chill runs down your spine — something is closing in on your position.</color>",
+            "type": "bad"
+          },
+          {
+            "math": [
+              "global_nemtrack_msg_pending = global_nemtrack_msg_pending - 1"
+            ]
+          }
+        ]
+      },
+      {
+        "if": {
+          "math": [
+            "global_nemtrack_ambush_pending >= 1"
+          ]
+        },
+        "then": [
+          {
+            "u_message": "<color_dark_gray>The feeling of pursuit fades... it may be lying in wait.</color>",
+            "type": "neutral"
+          },
+          {
+            "math": [
+              "global_nemtrack_ambush_pending = global_nemtrack_ambush_pending - 1"
+            ]
+          }
+        ]
+      },
+      {
+        "if": {
+          "math": [
+            "global_nemtrack_resume_pending >= 1"
+          ]
+        },
+        "then": [
+          {
+            "u_message": "<color_yellow>The feeling of pursuit returns — something has found your trail again.</color>",
+            "type": "bad"
+          },
+          {
+            "math": [
+              "global_nemtrack_resume_pending = global_nemtrack_resume_pending - 1"
+            ]
+          }
+        ]
+      },
+      {
+        "if": {
+          "math": [
+            "global_nemtrack_prox_pending >= 1"
+          ]
+        },
+        "then": [
+          {
+            "u_message": "<color_dark_gray>A presence lingers just beyond your sight — something is out there, closer than you'd like.</color>",
+            "type": "neutral"
+          },
+          {
+            "math": [
+              "global_nemtrack_prox_pending = global_nemtrack_prox_pending - 1"
+            ]
+          }
+        ]
+      },
+      {
+        "if": {
+          "math": [
+            "global_nemtrack_phase_shift_pending >= 1"
+          ]
+        },
+        "then": [
+          {
+            "u_message": "<color_dark_gray>The methodical feeling fades — whatever is out there has lost the thread, but it hasn't stopped.</color>",
+            "type": "neutral"
+          },
+          {
+            "math": [
+              "global_nemtrack_phase_shift_pending = global_nemtrack_phase_shift_pending - 1"
+            ]
+          }
+        ]
+      },
+      {
+        "if": {
+          "math": [
+            "global_nemtrack_dread_high_pending >= 1"
+          ]
+        },
+        "then": [
+          {
+            "u_message": "<color_red>The hairs on the back of your neck stand on end. It's close.</color>",
+            "type": "bad"
+          },
+          {
+            "math": [
+              "global_nemtrack_dread_high_pending = global_nemtrack_dread_high_pending - 1"
+            ]
+          }
+        ]
+      },
+      {
+        "if": {
+          "math": [
+            "global_nemtrack_dread_mid_pending >= 1"
+          ]
+        },
+        "then": [
+          {
+            "u_message": "<color_yellow>Something is wrong. Your instincts scream that you are not alone.</color>",
+            "type": "bad"
+          },
+          {
+            "math": [
+              "global_nemtrack_dread_mid_pending = global_nemtrack_dread_mid_pending - 1"
+            ]
+          }
+        ]
+      },
+      {
+        "if": {
+          "math": [
+            "global_nemtrack_dread_low_pending >= 1"
+          ]
+        },
+        "then": [
+          {
+            "u_message": "<color_dark_gray>You feel vaguely unsettled, as if a memory is pulling at you.</color>",
+            "type": "neutral"
+          },
+          {
+            "math": [
+              "global_nemtrack_dread_low_pending = global_nemtrack_dread_low_pending - 1"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_ACOUSTIC_SMASH",
+    "eoc_type": "EVENT",
+    "required_event": "character_smashes_tile",
+    "condition": "u_is_avatar",
+    "effect": [
+      {
+        "math": [
+          "global_nemesis_noise_level = max(global_nemesis_noise_level, 30)"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_ACOUSTIC_RANGED",
+    "eoc_type": "EVENT",
+    "required_event": "character_ranged_attacks_monster",
+    "condition": "u_is_avatar",
+    "effect": [
+      {
+        "math": [
+          "global_nemesis_noise_level = max(global_nemesis_noise_level, 20)"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_TRACKER",
+    "eoc_type": "RECURRING",
+    "global": true,
+    "run_for_npcs": true,
+    "recurrence": [
+      "60 minutes",
+      "60 minutes"
+    ],
+    "condition": {
+      "u_has_trait": "NEMESIS_MARK"
+    },
+    "effect": [
+      {
+        "if": {
+          "u_has_effect": "NEMESIS_AMBUSH"
+        },
+        "then": [
+          {
+            "math": [
+              "global_nemtrack_omt_dist = abs(u_val('pos_x') / 24 - global_player_omt_x) + abs(u_val('pos_y') / 24 - global_player_omt_y)"
+            ]
+          },
+          {
+            "if": {
+              "math": [
+                "global_nemtrack_omt_dist <= 5"
+              ]
+            },
+            "then": [
+              {
+                "u_lose_effect": "NEMESIS_AMBUSH"
+              },
+              {
+                "location_variable_adjust": {
+                  "global_val": "global_nemesis_player_ms_pos"
+                },
+                "output_var": {
+                  "u_val": "nemesis_last_tracked_pos"
+                }
+              },
+              {
+                "u_add_effect": "NEMESIS_HUNTING",
+                "duration": "PERMANENT"
+              },
+              {
+                "u_add_effect": "NEMESIS_OVR_DIST",
+                "duration": "PERMANENT",
+                "intensity": 30
+              },
+              {
+                "u_lose_effect": "NEMESIS_FRUSTRATION"
+              },
+              {
+                "math": [
+                  "global_nemtrack_resume_pending = global_nemtrack_resume_pending + 1"
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "if": {
+          "u_has_effect": "NEMESIS_HUNTING"
+        },
+        "then": [
+          {
+            "math": [
+              "global_nemtrack_omt_dist = abs(u_val('pos_x') / 24 - global_player_omt_x) + abs(u_val('pos_y') / 24 - global_player_omt_y)"
+            ]
+          },
+          {
+            "math": [
+              "global_nemtrack_score = max(0, u_val('perception') - global_nemtrack_omt_dist * 3) * 10"
+            ]
+          },
+          {
+            "if": {
+              "and": [
+                {
+                  "math": [
+                    "global_nemesis_noise_level > 0"
+                  ]
+                },
+                {
+                  "not": {
+                    "u_has_flag": "DEAF"
+                  }
+                }
+              ]
+            },
+            "then": [
+              {
+                "math": [
+                  "global_nemtrack_score = global_nemtrack_score + global_nemesis_noise_level * 2"
+                ]
+              }
+            ]
+          },
+          {
+            "if": {
+              "or": [
+                {
+                  "and": [
+                    {
+                      "math": [
+                        "global_nemtrack_omt_dist <= 2"
+                      ]
+                    },
+                    {
+                      "math": [
+                        "global_nemtrack_score > 0"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "math": [
+                    "global_nemtrack_score >= 15"
+                  ]
+                }
+              ]
+            },
+            "then": [
+              {
+                "location_variable_adjust": {
+                  "global_val": "global_nemesis_player_ms_pos"
+                },
+                "output_var": {
+                  "u_val": "nemesis_last_tracked_pos"
+                }
+              },
+              {
+                "u_set_goal": {
+                  "om_terrain": "field",
+                  "var": {
+                    "u_val": "nemesis_last_tracked_pos"
+                  }
+                }
+              },
+              {
+                "u_add_effect": "NEMESIS_OVR_DIST",
+                "duration": "PERMANENT",
+                "intensity": {
+                  "math": [
+                    "max(2, u_effect_intensity('NEMESIS_OVR_DIST') - 3)"
+                  ]
+                }
+              },
+              {
+                "u_add_effect": "NEMESIS_FRUSTRATION",
+                "duration": "PERMANENT",
+                "intensity": {
+                  "math": [
+                    "max(0, u_effect_intensity('NEMESIS_FRUSTRATION') - 2)"
+                  ]
+                }
+              },
+              {
+                "math": [
+                  "global_nemtrack_msg_pending = global_nemtrack_msg_pending + 1"
+                ]
+              }
+            ],
+            "else": [
+              {
+                "if": {
+                  "math": [
+                    "global_player_in_safe_zone == 1"
+                  ]
+                },
+                "then": [
+                  {
+                    "u_lose_effect": "NEMESIS_HUNTING"
+                  },
+                  {
+                    "u_lose_effect": "NEMESIS_FRUSTRATION"
+                  },
+                  {
+                    "u_add_effect": "NEMESIS_AMBUSH",
+                    "duration": "PERMANENT",
+                    "intensity": 1
+                  },
+                  {
+                    "u_add_effect": "NEMESIS_OVR_DIST",
+                    "duration": "PERMANENT",
+                    "intensity": 5
+                  },
+                  {
+                    "math": [
+                      "global_nemtrack_ambush_pending = global_nemtrack_ambush_pending + 1"
+                    ]
+                  }
+                ],
+                "else": [
+                  {
+                    "if": {
+                      "math": [
+                        "u_effect_intensity('NEMESIS_FRUSTRATION') * 2 < u_val('intelligence') + u_val('perception')"
+                      ]
+                    },
+                    "then": [
+                      {
+                        "u_add_effect": "NEMESIS_FRUSTRATION",
+                        "duration": "PERMANENT",
+                        "intensity": {
+                          "math": [
+                            "max(u_effect_intensity('NEMESIS_FRUSTRATION'), 0) + 1"
+                          ]
+                        }
+                      },
+                      {
+                        "if": {
+                          "math": [
+                            "u_effect_intensity('NEMESIS_FRUSTRATION') * 4 < u_val('intelligence') + u_val('perception')"
+                          ]
+                        },
+                        "then": [
+                          {
+                            "location_variable_adjust": {
+                              "u_val": "nemesis_last_tracked_pos"
+                            },
+                            "output_var": {
+                              "u_val": "nemesis_wander_target"
+                            },
+                            "overmap_tile": true,
+                            "x_adjust": {
+                              "math": [
+                                "rng(-(max(2, u_effect_intensity('NEMESIS_OVR_DIST'))), max(2, u_effect_intensity('NEMESIS_OVR_DIST')))"
+                              ]
+                            },
+                            "y_adjust": {
+                              "math": [
+                                "rng(-(max(2, u_effect_intensity('NEMESIS_OVR_DIST'))), max(2, u_effect_intensity('NEMESIS_OVR_DIST')))"
+                              ]
+                            }
+                          },
+                          {
+                            "u_set_goal": {
+                              "om_terrain": "field",
+                              "var": {
+                                "u_val": "nemesis_wander_target"
+                              }
+                            }
+                          }
+                        ],
+                        "else": [
+                          {
+                            "if": {
+                              "math": [
+                                "u_effect_intensity('NEMESIS_FRUSTRATION') * 4 < u_val('intelligence') + u_val('perception') + 1"
+                              ]
+                            },
+                            "then": [
+                              {
+                                "math": [
+                                  "global_nemtrack_phase_shift_pending = global_nemtrack_phase_shift_pending + 1"
+                                ]
+                              }
+                            ]
+                          },
+                          {
+                            "u_location_variable": {
+                              "u_val": "nemesis_self_pos"
+                            },
+                            "min_radius": 0,
+                            "max_radius": 0
+                          },
+                          {
+                            "location_variable_adjust": {
+                              "u_val": "nemesis_self_pos"
+                            },
+                            "output_var": {
+                              "u_val": "nemesis_wander_target"
+                            },
+                            "overmap_tile": true,
+                            "x_adjust": {
+                              "math": [
+                                "rng(-(max(2, u_effect_intensity('NEMESIS_OVR_DIST'))), max(2, u_effect_intensity('NEMESIS_OVR_DIST')))"
+                              ]
+                            },
+                            "y_adjust": {
+                              "math": [
+                                "rng(-(max(2, u_effect_intensity('NEMESIS_OVR_DIST'))), max(2, u_effect_intensity('NEMESIS_OVR_DIST')))"
+                              ]
+                            }
+                          },
+                          {
+                            "u_set_goal": {
+                              "om_terrain": "field",
+                              "var": {
+                                "u_val": "nemesis_wander_target"
+                              }
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "math": [
+                          "global_nemesis_dread_range = max(3, (u_val('intelligence') + u_val('perception')) / 4)"
+                        ]
+                      },
+                      {
+                        "if": {
+                          "math": [
+                            "global_nemtrack_omt_dist <= global_nemesis_dread_range"
+                          ]
+                        },
+                        "then": [
+                          {
+                            "math": [
+                              "global_nemesis_close = 1"
+                            ]
+                          }
+                        ]
+                      }
+                    ],
+                    "else": [
+                      {
+                        "u_lose_effect": "NEMESIS_HUNTING"
+                      },
+                      {
+                        "u_lose_effect": "NEMESIS_FRUSTRATION"
+                      },
+                      {
+                        "u_add_effect": "NEMESIS_AMBUSH",
+                        "duration": "PERMANENT",
+                        "intensity": 1
+                      },
+                      {
+                        "u_add_effect": "NEMESIS_OVR_DIST",
+                        "duration": "PERMANENT",
+                        "intensity": 5
+                      },
+                      {
+                        "math": [
+                          "global_nemtrack_ambush_pending = global_nemtrack_ambush_pending + 1"
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "false_effect": [
+      {
+        "if": "u_is_avatar",
+        "then": [
+          {
+            "u_location_variable": {
+              "global_val": "global_nemesis_player_ms_pos"
+            },
+            "min_radius": 0,
+            "max_radius": 0
+          },
+          {
+            "math": [
+              "global_player_omt_x = u_val('pos_x') / 24"
+            ]
+          },
+          {
+            "math": [
+              "global_player_omt_y = u_val('pos_y') / 24"
+            ]
+          },
+          {
+            "if": {
+              "math": [
+                "global_nemesis_noise_level > 0"
+              ]
+            },
+            "then": [
+              {
+                "math": [
+                  "global_nemesis_noise_level = max(0, global_nemesis_noise_level - 5)"
+                ]
+              }
+            ]
+          },
+          {
+            "if": {
+              "or": [
+                {
+                  "u_near_om_location": "shelter",
+                  "range": 0
+                },
+                {
+                  "u_near_om_location": "evac_center_13",
+                  "range": 2
+                },
+                {
+                  "u_near_om_location": "outpost",
+                  "range": 0
+                },
+                {
+                  "u_near_om_location": "ranch_camp_1",
+                  "range": 12
+                }
+              ]
+            },
+            "then": [
+              {
+                "math": [
+                  "global_player_in_safe_zone = 1"
+                ]
+              }
+            ],
+            "else": [
+              {
+                "math": [
+                  "global_player_in_safe_zone = 0"
+                ]
+              }
+            ]
+          },
+          {
+            "if": {
+              "math": [
+                "global_nemesis_close == 1"
+              ]
+            },
+            "then": [
+              {
+                "math": [
+                  "global_nemesis_close = 0"
+                ]
+              },
+              {
+                "math": [
+                  "global_nemesis_dread_score = u_val('perception') + u_skill('survival') * 2"
+                ]
+              },
+              {
+                "if": {
+                  "math": [
+                    "u_val('morale') > 0"
+                  ]
+                },
+                "then": [
+                  {
+                    "math": [
+                      "global_nemesis_dread_score = global_nemesis_dread_score + 2"
+                    ]
+                  }
+                ]
+              },
+              {
+                "if": {
+                  "math": [
+                    "global_nemesis_dread_score >= 15"
+                  ]
+                },
+                "then": [
+                  {
+                    "math": [
+                      "global_nemtrack_dread_high_pending = global_nemtrack_dread_high_pending + 1"
+                    ]
+                  }
+                ],
+                "else": [
+                  {
+                    "if": {
+                      "math": [
+                        "global_nemesis_dread_score >= 12"
+                      ]
+                    },
+                    "then": [
+                      {
+                        "math": [
+                          "global_nemtrack_dread_mid_pending = global_nemtrack_dread_mid_pending + 1"
+                        ]
+                      }
+                    ],
+                    "else": [
+                      {
+                        "if": {
+                          "math": [
+                            "global_nemesis_dread_score >= 9"
+                          ]
+                        },
+                        "then": [
+                          {
+                            "math": [
+                              "global_nemtrack_dread_low_pending = global_nemtrack_dread_low_pending + 1"
+                            ]
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_HUB_364Y_0000D",
+    "eoc_type": "ACTIVATION",
+    "effect": [
+      {
+        "run_eocs": [
+          "EOC_NEMESIS_SPAWN_CHECK_alice_martin_0000"
+        ]
+      },
+      {
+        "run_eocs": [
+          "EOC_NEMESIS_SPAWN_CHECK_bob_smith_0002"
+        ]
+      },
+      {
+        "run_eocs": [
+          "EOC_NEMESIS_SPAWN_CHECK_kent_lee_0004"
+        ]
+      },
+      {
+        "run_eocs": [
+          "EOC_NEMESIS_SPAWN_CHECK_lynch_jones_0007"
+        ]
+      },
+      {
+        "run_eocs": [
+          "EOC_NEMESIS_SPAWN_CHECK_marco_harris_0006"
+        ]
+      },
+      {
+        "run_eocs": [
+          "EOC_NEMESIS_SPAWN_CHECK_ragnarok_lee_0009"
+        ]
+      },
+      {
+        "run_eocs": [
+          "EOC_NEMESIS_SPAWN_CHECK_sam_williams_0001"
+        ]
+      },
+      {
+        "run_eocs": [
+          "EOC_NEMESIS_SPAWN_CHECK_tara_lee_0003"
+        ]
+      },
+      {
+        "run_eocs": [
+          "EOC_NEMESIS_SPAWN_CHECK_viper_anderson_0008"
+        ]
+      },
+      {
+        "run_eocs": [
+          "EOC_NEMESIS_SPAWN_CHECK_wade_brown_0005"
+        ]
+      }
+    ]
+  }
+]

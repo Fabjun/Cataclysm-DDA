@@ -1,0 +1,622 @@
+[
+  {
+    "type": "faction",
+    "id": "nemesis_faction_thanatos_williams_0009",
+    "name": "Nemesis (thanatos_williams_0009)",
+    "likes_u": -100,
+    "respects_u": -100,
+    "known_by_u": true,
+    "description": "A nemesis returned from death.",
+    "size": 1,
+    "power": 100,
+    "wealth": 0,
+    "fac_food_supply": [
+      [
+        0,
+        {
+          "calories": 0,
+          "vitamins": {}
+        }
+      ]
+    ],
+    "mon_faction": "zombie",
+    "relations": {
+      "old_guard": {
+        "kill on sight": true
+      },
+      "free_merchants": {
+        "kill on sight": true
+      },
+      "tacoma_commune": {
+        "kill on sight": true
+      },
+      "your_followers": {
+        "kill on sight": true
+      },
+      "robofac": {
+        "kill on sight": true
+      },
+      "exodii": {
+        "kill on sight": true
+      }
+    }
+  },
+  {
+    "type": "ITEM",
+    "id": "nemesis_memento_thanatos_williams_0009",
+    "name": {
+      "str": "memento — Thanatos Williams"
+    },
+    "description": "\"It shouldn't be here. Neither should you.\" - Thanatos Williams dissolves back into the void from which they came.",
+    "weight": "50 g",
+    "volume": "250 ml",
+    "price": "0 cent",
+    "material": [
+      "leather"
+    ],
+    "symbol": "?",
+    "color": "dark_gray",
+    "flags": [
+      "NO_REPAIR"
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "nem_worn_thanatos_williams_0009",
+    "subtype": "collection",
+    "entries": [
+      {
+        "item": "chaps_cut_resistant",
+        "prob": 100,
+        "damage": [
+          1,
+          1
+        ],
+        "custom-flags": [
+          "FILTHY"
+        ]
+      },
+      {
+        "item": "xl_ballistic_vest_lc",
+        "prob": 100,
+        "damage": [
+          1,
+          1
+        ],
+        "custom-flags": [
+          "FILTHY"
+        ]
+      },
+      {
+        "item": "nomad_bodyglove_2",
+        "prob": 100,
+        "custom-flags": [
+          "FILTHY"
+        ]
+      },
+      {
+        "item": "hazmat_suit",
+        "prob": 100,
+        "damage": [
+          1,
+          1
+        ],
+        "custom-flags": [
+          "FILTHY"
+        ]
+      },
+      {
+        "item": "helmet_eod",
+        "prob": 100,
+        "damage": [
+          1,
+          1
+        ],
+        "custom-flags": [
+          "FILTHY"
+        ]
+      },
+      {
+        "item": "survivor_rig",
+        "prob": 100,
+        "damage": [
+          1,
+          1
+        ],
+        "custom-flags": [
+          "FILTHY"
+        ]
+      },
+      {
+        "item": "utility_exoskeleton_off",
+        "prob": 100,
+        "custom-flags": [
+          "FILTHY"
+        ]
+      },
+      {
+        "item": "gloves_survivor",
+        "prob": 100,
+        "custom-flags": [
+          "FILTHY"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "nem_carry_thanatos_williams_0009",
+    "subtype": "collection",
+    "entries": [
+      {
+        "item": "c4",
+        "prob": 100
+      },
+      {
+        "item": "flu_shot",
+        "prob": 100,
+        "damage": [
+          1,
+          1
+        ]
+      },
+      {
+        "item": "mre_beef",
+        "prob": 100
+      },
+      {
+        "item": "oxycodone",
+        "prob": 100
+      },
+      {
+        "item": "thermometer",
+        "prob": 100
+      }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "nem_weapon_thanatos_williams_0009",
+    "subtype": "collection",
+    "entries": [
+      {
+        "item": "zweihander",
+        "prob": 100,
+        "damage": [
+          1,
+          1
+        ]
+      }
+    ]
+  },
+  {
+    "type": "npc_class",
+    "id": "NC_NEMESIS_thanatos_williams_0009",
+    "name": {
+      "str": "Nemesis (Thanatos Williams)"
+    },
+    "job_description": "Famous last words: \"Not this dimension.\" Stepped through a portal that didn't go anywhere good.",
+    "common": false,
+    "bonus_str": 10,
+    "bonus_dex": 7,
+    "bonus_int": 10,
+    "bonus_per": 9,
+    "worn_override": "nem_worn_thanatos_williams_0009",
+    "carry_override": "nem_carry_thanatos_williams_0009",
+    "weapon_override": "nem_weapon_thanatos_williams_0009",
+    "traits": [
+      [
+        "PAINRESIST",
+        100
+      ],
+      [
+        "FLEET",
+        100
+      ],
+      [
+        "HOOVES",
+        100
+      ],
+      [
+        "TOUGH",
+        100
+      ],
+      [
+        "NEMESIS_MARK",
+        100
+      ],
+      [
+        "DEBUG_PHASE_MOVEMENT",
+        100
+      ],
+      [
+        "FACIAL_HAIR_ROYALE",
+        100
+      ]
+    ],
+    "bionics": [
+      {
+        "id": [
+          "bio_armor_arms"
+        ],
+        "chance": 100
+      },
+      {
+        "id": [
+          "bio_armor_legs"
+        ],
+        "chance": 100
+      },
+      {
+        "id": [
+          "bio_painkiller"
+        ],
+        "chance": 100
+      },
+      {
+        "id": [
+          "bio_targeting"
+        ],
+        "chance": 100
+      },
+      {
+        "id": [
+          "bio_emp"
+        ],
+        "chance": 100
+      }
+    ],
+    "skills": [
+      {
+        "skill": "archery",
+        "level": {
+          "constant": 5
+        }
+      },
+      {
+        "skill": "bashing",
+        "level": {
+          "constant": 9
+        }
+      },
+      {
+        "skill": "dodge",
+        "level": {
+          "constant": 9
+        }
+      },
+      {
+        "skill": "gun",
+        "level": {
+          "constant": 9
+        }
+      },
+      {
+        "skill": "melee",
+        "level": {
+          "constant": 8
+        }
+      },
+      {
+        "skill": "pistol",
+        "level": {
+          "constant": 8
+        }
+      },
+      {
+        "skill": "rifle",
+        "level": {
+          "constant": 8
+        }
+      },
+      {
+        "skill": "smg",
+        "level": {
+          "constant": 7
+        }
+      },
+      {
+        "skill": "stabbing",
+        "level": {
+          "constant": 7
+        }
+      },
+      {
+        "skill": "survival",
+        "level": {
+          "constant": 8
+        }
+      },
+      {
+        "skill": "throw",
+        "level": {
+          "constant": 9
+        }
+      }
+    ]
+  },
+  {
+    "type": "npc",
+    "id": "npc_nemesis_thanatos_williams_0009",
+    "name_unique": "Thanatos Williams",
+    "class": "NC_NEMESIS_thanatos_williams_0009",
+    "attitude": 10,
+    "mission": 0,
+    "chat": "TALK_DONE",
+    "faction": "nemesis_faction_thanatos_williams_0009",
+    "death_eocs": [
+      {
+        "id": "EOC_NEMESIS_DEATH_inline_npc_nemesis_thanatos_williams_0009",
+        "eoc_type": "NPC_DEATH",
+        "effect": [
+          {
+            "math": [
+              "global_nemesis_just_died_thanatos_williams_0009 = 1"
+            ]
+          },
+          {
+            "math": [
+              "global_nemesis_spawned_thanatos_williams_0009 = 3"
+            ]
+          },
+          {
+            "u_spawn_item": "nemesis_memento_thanatos_williams_0009",
+            "count": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_SPAWN_CHECK_thanatos_williams_0009",
+    "eoc_type": "ACTIVATION",
+    "condition": {
+      "and": [
+        {
+          "math": [
+            "global_nemesis_spawn_lock == 0"
+          ]
+        },
+        {
+          "math": [
+            "global_nemesis_spawned_thanatos_williams_0009 == 1"
+          ]
+        },
+        {
+          "math": [
+            "time_since(global_nemesis_char_start_thanatos_williams_0009) >= time('117 days')"
+          ]
+        },
+        {
+          "not": "u_is_outside"
+        }
+      ]
+    },
+    "effect": [
+      {
+        "u_spawn_npc": "npc_nemesis_thanatos_williams_0009",
+        "unique_id": "nemesis_thanatos_williams_0009",
+        "real_count": 1,
+        "min_radius": 40,
+        "max_radius": 55,
+        "true_eocs": [
+          "EOC_NEMESIS_SPAWN_SUCCESS_thanatos_williams_0009"
+        ]
+      }
+    ],
+    "false_effect": [
+      {
+        "if": {
+          "math": [
+            "global_nemesis_spawned_thanatos_williams_0009 == 0"
+          ]
+        },
+        "then": [
+          {
+            "math": [
+              "global_nemesis_spawned_thanatos_williams_0009 = 1"
+            ]
+          },
+          {
+            "math": [
+              "global_nemesis_char_start_thanatos_williams_0009 = time('now')"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_SPAWN_SUCCESS_thanatos_williams_0009",
+    "eoc_type": "ACTIVATION",
+    "effect": [
+      {
+        "math": [
+          "global_nemesis_spawned_thanatos_williams_0009 = 2"
+        ]
+      },
+      {
+        "math": [
+          "global_nemesis_last_spawn = time('now')"
+        ]
+      },
+      {
+        "math": [
+          "global_nemesis_spawn_lock = 1"
+        ]
+      },
+      {
+        "if": {
+          "math": [
+            "u_val('perception') >= 10"
+          ]
+        },
+        "then": {
+          "u_message": "<color_red>A chill runs down your spine... Thanatos Williams has returned from the grave.</color>",
+          "type": "bad"
+        }
+      },
+      {
+        "u_run_npc_eocs": [
+          "EOC_NEMESIS_WOUNDS_thanatos_williams_0009"
+        ],
+        "unique_ids": [
+          "nemesis_thanatos_williams_0009"
+        ]
+      },
+      {
+        "u_run_npc_eocs": [
+          "EOC_NEMESIS_EFFECTS_thanatos_williams_0009"
+        ],
+        "unique_ids": [
+          "nemesis_thanatos_williams_0009"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_DEATH_NOTIFY_thanatos_williams_0009",
+    "eoc_type": "ACTIVATION",
+    "condition": {
+      "math": [
+        "global_nemesis_just_died_thanatos_williams_0009 == 1"
+      ]
+    },
+    "effect": [
+      {
+        "u_message": "<color_green>Thanatos Williams dissolves back into the void from which they came.</color>",
+        "type": "good"
+      },
+      {
+        "u_message": "A weight lifts from your shoulders. It's over.",
+        "type": "good"
+      },
+      {
+        "u_add_morale": "morale_nemesis_justice",
+        "bonus": 20,
+        "max_bonus": 20,
+        "duration": "6 hours",
+        "decay_start": "3 hours"
+      },
+      {
+        "math": [
+          "global_nemesis_just_died_thanatos_williams_0009 = 0"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_WOUNDS_thanatos_williams_0009",
+    "eoc_type": "ACTIVATION",
+    "effect": [
+      {
+        "math": [
+          "u_hp('arm_l') = u_hp_max('arm_l') * 0.97"
+        ]
+      },
+      {
+        "math": [
+          "u_hp('arm_r') = u_hp_max('arm_r') * 0.91"
+        ]
+      },
+      {
+        "math": [
+          "u_hp('head') = u_hp_max('head') * 0.7"
+        ]
+      },
+      {
+        "math": [
+          "u_hp('leg_l') = u_hp_max('leg_l') * 0.79"
+        ]
+      },
+      {
+        "math": [
+          "u_hp('leg_r') = u_hp_max('leg_r') * 0.64"
+        ]
+      },
+      {
+        "math": [
+          "u_hp('torso') = u_hp_max('torso') * 0.95"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_EFFECTS_thanatos_williams_0009",
+    "eoc_type": "ACTIVATION",
+    "effect": [
+      {
+        "u_learn_martial_art": "style_tiger"
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_HUNT_REDIRECT_thanatos_williams_0009",
+    "eoc_type": "EVENT",
+    "required_event": "avatar_enters_omt",
+    "condition": {
+      "math": [
+        "global_nemesis_spawned_thanatos_williams_0009 == 2"
+      ]
+    },
+    "effect": [
+      {
+        "u_location_variable": {
+          "global_val": "global_nemesis_player_ms_pos"
+        },
+        "min_radius": 0,
+        "max_radius": 0
+      },
+      {
+        "math": [
+          "global_player_omt_x = u_val('pos_x') / 24"
+        ]
+      },
+      {
+        "math": [
+          "global_player_omt_y = u_val('pos_y') / 24"
+        ]
+      },
+      {
+        "u_run_npc_eocs": [
+          "EOC_NEMESIS_REDIRECT_NPC_thanatos_williams_0009"
+        ],
+        "unique_ids": [
+          "nemesis_thanatos_williams_0009"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_REDIRECT_NPC_thanatos_williams_0009",
+    "eoc_type": "ACTIVATION",
+    "condition": {
+      "u_has_effect": "NEMESIS_HUNTING"
+    },
+    "effect": [
+      {
+        "location_variable_adjust": {
+          "global_val": "global_nemesis_player_ms_pos"
+        },
+        "output_var": {
+          "u_val": "nemesis_last_tracked_pos"
+        }
+      },
+      {
+        "u_set_goal": {
+          "om_terrain": "field",
+          "var": {
+            "u_val": "nemesis_last_tracked_pos"
+          }
+        }
+      }
+    ]
+  }
+]

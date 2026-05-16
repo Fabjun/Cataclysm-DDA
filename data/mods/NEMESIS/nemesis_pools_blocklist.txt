@@ -1,0 +1,284 @@
+# NEMESIS pool blocklist
+# One item ID per line. Lines starting with # are comments.
+# Items listed here are excluded from all auto-generated categories.
+# Edit this file after reviewing `git diff nemesis_pools.py` and re-run:
+#   python3 nemesis_pool_generator.py
+
+# --- Raw / perishable food ---
+apple
+apple_cider
+apple_jelly
+avocado
+banana
+blueberries
+cantaloupe
+carrot
+cherry
+coconut
+cranberries
+cucumber
+egg
+egg_bird
+egg_chicken
+egg_fried
+egg_soft
+grapefruit
+grapes
+honeydew
+kiwi
+lemon
+lettuce
+lime
+mango
+mushroom
+onion
+orange
+peach
+pear
+pepper_bell
+pepper_hot
+pineapple
+plum
+pomegranate
+potato
+radish
+raspberry
+strawberry
+tomato
+watermelon
+zucchini
+
+# --- Raw meat / butchering results ---
+meat
+meat_cooked
+meat_smoked
+offal
+offal_cooked
+meat_bear
+meat_bear_cooked
+meat_bird
+meat_bird_cooked
+meat_crow
+meat_deer
+meat_deer_cooked
+meat_fish
+meat_fish_cooked
+meat_human
+meat_human_cooked
+meat_mangled
+meat_mutant
+meat_mutant_cooked
+meat_rotten
+meat_tainted
+meat_large_chunk
+meat_chunk
+animal_fat
+lard
+
+# --- Strange / alien / inappropriate ---
+slime_scrap
+nether_essence
+portal_goo
+eldritch_flesh
+fungal_mass
+mycus_fruit
+marloss_berry
+marloss_gel
+mycus_spore
+void_essence
+amigara_horror_flesh
+
+# --- Fantasy / medieval armor ---
+chainmail_coif
+chainmail_suit
+chainmail_vest
+chainmail_chestpiece
+ringmail_coif
+plate_armor
+plate_helmet
+plate_arms
+plate_legs
+plate_gloves
+plate_boots
+chain_vest
+roman_helmet
+roman_armor
+knight_armor
+knight_helmet
+gambeson
+arming_doublet
+hauberk
+lamellar_armor
+scale_armor
+brigandine
+
+# --- Mutant anatomy clothing (not caught by cover filter) ---
+fur_pelt
+hide_pelt
+bone_armor
+shell_plate
+carapace_armor
+antler_hat
+wing_harness
+
+# --- Debug / special items ---
+debug_clothing
+debug_backpack
+debug_item
+test_pants
+test_shirt
+test_shoes
+cash_card
+cash_wallet
+
+# --- Costumes / novelty clothing ---
+ghost_robe
+ghost_robe_sheet
+grim_reaper_robe
+grim_reaper_robe_faceless
+cloak_vampire
+cloak_vampire_red
+mummy_dress
+mummy_jumpsuit
+flag_jumpsuit
+drinking_hat
+foodperson_mask
+bostonchan_wig
+clown_wig
+clownshoes
+clown_suit
+lame_foil
+lame_saber
+jedi_cloak
+santa_hat
+santa_belt
+santa_dress
+santa_dress_long
+santa_dress_short
+santa_gloves
+santa_pants
+
+# --- Alien / inappropriate clothing ---
+marloss_scarf
+
+# --- Medical worn devices (belong in carry, not worn) ---
+# Splints/casts caught by SPLINT flag in classifier; listing here for explicitness
+arm_splint
+arm_xlsplint
+arm_xs_splint
+leg_splint
+leg_xlsplint
+leg_xs_splint
+
+# --- Wrong-category worn items ---
+angel_wings
+golf_bag
+mininuke_act
+sleeping_bag_improvised
+tarp
+emer_blanket
+flintlock_pouch
+
+# ---------------------------------------------------------------------------
+# CARRY_FOOD exclusions — items that passed the comestible_type=FOOD check but
+# are semantically wrong for a Nemesis inventory.
+# Most systematic patterns (mutant_, nether_, human_, egg_*, _active) are now
+# filtered in the generator's _classify_food function.  Items below are one-off
+# cases that do not match any reusable pattern.
+# ---------------------------------------------------------------------------
+
+# --- Debug food items ---
+debug_calories
+debug_nutrition
+
+# --- Venoms incorrectly classified as comestibles ---
+# These items have comestible_type=FOOD in CDDA but are animal venoms, not food.
+venom_bee
+venom_paralytic
+venom_wasp
+
+# --- Cannibalism items whose IDs don't start with human_/demihuman_ ---
+# The generator filter catches human_*/demihuman_* prefixes; these end with
+# _human or embed it differently and need explicit listing.
+fat_tainted_human
+tainted_innards_human
+pepperhuman
+small_demihuman_stomach_boiled
+
+# --- Tainted / ruined food ---
+fat_tainted
+tainted_innards
+ruined_chunks
+meal_bone
+meal_bone_tainted
+
+# --- Alien / nether food not caught by ID fragment filter ---
+# alien_meadow_bush_2_fruit has no standard faction prefix.
+# bone_mi-go uses a hyphen separator instead of underscore.
+alien_meadow_bush_2_fruit
+bone_mi-go
+
+# --- Planting seeds (not ready-to-eat carry items) ---
+# seed_lotus_boiled is kept — boiled lotus seeds are real food.
+seed_eggplant
+seed_garlic_clove
+seed_potato_raw
+seed_pumpkin
+paste_seed
+
+# --- Agricultural and fertilizer inputs ---
+fert_supplement
+fertilizer_commercial
+
+# --- Brewing and fermentation inputs (not standalone food) ---
+# _active variants are caught by the generator's endswith("_active") filter.
+# sourdough_starter_uncovered and yogurt_starter_culture lack that suffix.
+yeast
+koji
+hops
+malted_grain
+yogurt_starter_culture
+sourdough_starter_uncovered
+
+# --- Raw dry cooking ingredients (not ready-to-eat on their own) ---
+flour
+flour_wheat_free
+cornmeal
+bread_flour
+starch
+
+# --- Raw / uncooked pasta ---
+spaghetti_raw
+macaroni_raw
+lasagne_raw
+
+# --- Raw uncooked meat products ---
+sausage_raw
+sausage_wasteland_raw
+meatball_raw
+
+# --- Frozen uncooked food ---
+# frozen_dinner is kept — it is a ready-to-eat meal that happens to be frozen.
+corndogs_frozen
+hotdogs_frozen
+toasterpastryfrozen
+
+# --- Pet / animal feed ---
+catfood
+catfood_dry
+catfood_raw
+dogfood
+dogfood_dry
+dogfood_raw
+cow_candy
+
+# --- Non-food or inedible plant material ---
+cotton_boll
+plant_stalk
+tea_green_raw
+tea_raw
+dogbane
+empty_corn_cob
+
+# --- Crafting intermediates not caught by _active suffix ---
+gelatin_fresh

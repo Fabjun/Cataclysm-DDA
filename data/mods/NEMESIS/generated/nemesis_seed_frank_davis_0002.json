@@ -1,0 +1,512 @@
+[
+  {
+    "type": "faction",
+    "id": "nemesis_faction_frank_davis_0002",
+    "name": "Nemesis (frank_davis_0002)",
+    "likes_u": -100,
+    "respects_u": -100,
+    "known_by_u": true,
+    "description": "A nemesis returned from death.",
+    "size": 1,
+    "power": 100,
+    "wealth": 0,
+    "fac_food_supply": [
+      [
+        0,
+        {
+          "calories": 0,
+          "vitamins": {}
+        }
+      ]
+    ],
+    "mon_faction": "zombie",
+    "relations": {
+      "old_guard": {
+        "kill on sight": true
+      },
+      "free_merchants": {
+        "kill on sight": true
+      },
+      "tacoma_commune": {
+        "kill on sight": true
+      },
+      "your_followers": {
+        "kill on sight": true
+      },
+      "robofac": {
+        "kill on sight": true
+      },
+      "exodii": {
+        "kill on sight": true
+      }
+    }
+  },
+  {
+    "type": "ITEM",
+    "id": "nemesis_memento_frank_davis_0002",
+    "name": {
+      "str": "memento — Frank Davis"
+    },
+    "description": "\"Worn down to almost nothing. Like them.\" - Frank Davis is finally allowed to rest.",
+    "weight": "50 g",
+    "volume": "250 ml",
+    "price": "0 cent",
+    "material": [
+      "leather"
+    ],
+    "symbol": "?",
+    "color": "dark_gray",
+    "flags": [
+      "NO_REPAIR"
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "nem_worn_frank_davis_0002",
+    "subtype": "collection",
+    "entries": [
+      {
+        "item": "10gal_hat",
+        "prob": 100,
+        "damage": [
+          3,
+          3
+        ],
+        "custom-flags": [
+          "FILTHY"
+        ]
+      },
+      {
+        "item": "sleeping_bag",
+        "prob": 100,
+        "damage": [
+          4,
+          4
+        ],
+        "custom-flags": [
+          "FILTHY"
+        ]
+      },
+      {
+        "item": "scarf_long",
+        "prob": 100,
+        "damage": [
+          3,
+          3
+        ],
+        "custom-flags": [
+          "FILTHY"
+        ]
+      },
+      {
+        "item": "camelbak",
+        "prob": 100,
+        "damage": [
+          4,
+          4
+        ],
+        "custom-flags": [
+          "FILTHY"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "nem_carry_frank_davis_0002",
+    "subtype": "collection",
+    "entries": [
+      {
+        "item": "arming_sword_inferior",
+        "prob": 100,
+        "damage": [
+          2,
+          2
+        ]
+      },
+      {
+        "item": "makeshift_axe",
+        "prob": 100,
+        "damage": [
+          4,
+          4
+        ]
+      },
+      {
+        "item": "bottle_plastic",
+        "prob": 100,
+        "damage": [
+          3,
+          3
+        ]
+      },
+      {
+        "item": "rope_30",
+        "prob": 100,
+        "damage": [
+          2,
+          2
+        ]
+      }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "nem_weapon_frank_davis_0002",
+    "subtype": "collection",
+    "entries": [
+      {
+        "item": "machete",
+        "prob": 100,
+        "damage": [
+          4,
+          4
+        ]
+      }
+    ]
+  },
+  {
+    "type": "npc_class",
+    "id": "NC_NEMESIS_frank_davis_0002",
+    "name": {
+      "str": "Nemesis (Frank Davis)"
+    },
+    "job_description": "Famous last words: \"So hungry...\" Forgot to eat. For too long.",
+    "common": false,
+    "bonus_str": -1,
+    "bonus_dex": 3,
+    "bonus_int": -1,
+    "bonus_per": 3,
+    "worn_override": "nem_worn_frank_davis_0002",
+    "carry_override": "nem_carry_frank_davis_0002",
+    "weapon_override": "nem_weapon_frank_davis_0002",
+    "traits": [
+      [
+        "NEMESIS_MARK",
+        100
+      ],
+      [
+        "HUNGER3",
+        100
+      ],
+      [
+        "LIGHTWEIGHT",
+        100
+      ],
+      [
+        "FACIAL_HAIR_BEARD",
+        100
+      ]
+    ],
+    "skills": [
+      {
+        "skill": "bashing",
+        "level": {
+          "constant": 2
+        }
+      },
+      {
+        "skill": "dodge",
+        "level": {
+          "constant": 2
+        }
+      },
+      {
+        "skill": "gun",
+        "level": {
+          "constant": 1
+        }
+      },
+      {
+        "skill": "melee",
+        "level": {
+          "constant": 2
+        }
+      },
+      {
+        "skill": "survival",
+        "level": {
+          "constant": 2
+        }
+      }
+    ]
+  },
+  {
+    "type": "npc",
+    "id": "npc_nemesis_frank_davis_0002",
+    "name_unique": "Frank Davis",
+    "class": "NC_NEMESIS_frank_davis_0002",
+    "attitude": 10,
+    "mission": 0,
+    "chat": "TALK_DONE",
+    "faction": "nemesis_faction_frank_davis_0002",
+    "death_eocs": [
+      {
+        "id": "EOC_NEMESIS_DEATH_inline_npc_nemesis_frank_davis_0002",
+        "eoc_type": "NPC_DEATH",
+        "effect": [
+          {
+            "math": [
+              "global_nemesis_just_died_frank_davis_0002 = 1"
+            ]
+          },
+          {
+            "math": [
+              "global_nemesis_spawned_frank_davis_0002 = 3"
+            ]
+          },
+          {
+            "u_spawn_item": "nemesis_memento_frank_davis_0002",
+            "count": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_SPAWN_CHECK_frank_davis_0002",
+    "eoc_type": "ACTIVATION",
+    "condition": {
+      "and": [
+        {
+          "math": [
+            "global_nemesis_spawn_lock == 0"
+          ]
+        },
+        {
+          "math": [
+            "global_nemesis_spawned_frank_davis_0002 == 1"
+          ]
+        },
+        {
+          "math": [
+            "time_since(global_nemesis_char_start_frank_davis_0002) >= time('10 days')"
+          ]
+        },
+        "u_is_outside"
+      ]
+    },
+    "effect": [
+      {
+        "u_spawn_npc": "npc_nemesis_frank_davis_0002",
+        "unique_id": "nemesis_frank_davis_0002",
+        "real_count": 1,
+        "min_radius": 40,
+        "max_radius": 55,
+        "true_eocs": [
+          "EOC_NEMESIS_SPAWN_SUCCESS_frank_davis_0002"
+        ]
+      }
+    ],
+    "false_effect": [
+      {
+        "if": {
+          "math": [
+            "global_nemesis_spawned_frank_davis_0002 == 0"
+          ]
+        },
+        "then": [
+          {
+            "math": [
+              "global_nemesis_spawned_frank_davis_0002 = 1"
+            ]
+          },
+          {
+            "math": [
+              "global_nemesis_char_start_frank_davis_0002 = time('now')"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_SPAWN_SUCCESS_frank_davis_0002",
+    "eoc_type": "ACTIVATION",
+    "effect": [
+      {
+        "math": [
+          "global_nemesis_spawned_frank_davis_0002 = 2"
+        ]
+      },
+      {
+        "math": [
+          "global_nemesis_last_spawn = time('now')"
+        ]
+      },
+      {
+        "math": [
+          "global_nemesis_spawn_lock = 1"
+        ]
+      },
+      {
+        "if": {
+          "math": [
+            "u_val('perception') >= 10"
+          ]
+        },
+        "then": {
+          "u_message": "<color_red>A chill runs down your spine... Frank Davis has returned from the grave.</color>",
+          "type": "bad"
+        }
+      },
+      {
+        "u_run_npc_eocs": [
+          "EOC_NEMESIS_WOUNDS_frank_davis_0002"
+        ],
+        "unique_ids": [
+          "nemesis_frank_davis_0002"
+        ]
+      },
+      {
+        "u_run_npc_eocs": [
+          "EOC_NEMESIS_EFFECTS_frank_davis_0002"
+        ],
+        "unique_ids": [
+          "nemesis_frank_davis_0002"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_DEATH_NOTIFY_frank_davis_0002",
+    "eoc_type": "ACTIVATION",
+    "condition": {
+      "math": [
+        "global_nemesis_just_died_frank_davis_0002 == 1"
+      ]
+    },
+    "effect": [
+      {
+        "u_message": "<color_green>Frank Davis is finally allowed to rest.</color>",
+        "type": "good"
+      },
+      {
+        "u_message": "A weight lifts from your shoulders. It's over.",
+        "type": "good"
+      },
+      {
+        "u_add_morale": "morale_nemesis_justice",
+        "bonus": 20,
+        "max_bonus": 20,
+        "duration": "6 hours",
+        "decay_start": "3 hours"
+      },
+      {
+        "math": [
+          "global_nemesis_just_died_frank_davis_0002 = 0"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_WOUNDS_frank_davis_0002",
+    "eoc_type": "ACTIVATION",
+    "effect": [
+      {
+        "math": [
+          "u_hp('arm_l') = u_hp_max('arm_l') * 0.09"
+        ]
+      },
+      {
+        "math": [
+          "u_hp('arm_r') = u_hp_max('arm_r') * 0.28"
+        ]
+      },
+      {
+        "math": [
+          "u_hp('head') = u_hp_max('head') * 0.18"
+        ]
+      },
+      {
+        "math": [
+          "u_hp('leg_l') = u_hp_max('leg_l') * 0.18"
+        ]
+      },
+      {
+        "math": [
+          "u_hp('leg_r') = u_hp_max('leg_r') * 0.26"
+        ]
+      },
+      {
+        "math": [
+          "u_hp('torso') = u_hp_max('torso') * 0.42"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_EFFECTS_frank_davis_0002",
+    "eoc_type": "ACTIVATION",
+    "effect": []
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_HUNT_REDIRECT_frank_davis_0002",
+    "eoc_type": "EVENT",
+    "required_event": "avatar_enters_omt",
+    "condition": {
+      "math": [
+        "global_nemesis_spawned_frank_davis_0002 == 2"
+      ]
+    },
+    "effect": [
+      {
+        "u_location_variable": {
+          "global_val": "global_nemesis_player_ms_pos"
+        },
+        "min_radius": 0,
+        "max_radius": 0
+      },
+      {
+        "math": [
+          "global_player_omt_x = u_val('pos_x') / 24"
+        ]
+      },
+      {
+        "math": [
+          "global_player_omt_y = u_val('pos_y') / 24"
+        ]
+      },
+      {
+        "u_run_npc_eocs": [
+          "EOC_NEMESIS_REDIRECT_NPC_frank_davis_0002"
+        ],
+        "unique_ids": [
+          "nemesis_frank_davis_0002"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_REDIRECT_NPC_frank_davis_0002",
+    "eoc_type": "ACTIVATION",
+    "condition": {
+      "u_has_effect": "NEMESIS_HUNTING"
+    },
+    "effect": [
+      {
+        "location_variable_adjust": {
+          "global_val": "global_nemesis_player_ms_pos"
+        },
+        "output_var": {
+          "u_val": "nemesis_last_tracked_pos"
+        }
+      },
+      {
+        "u_set_goal": {
+          "om_terrain": "field",
+          "var": {
+            "u_val": "nemesis_last_tracked_pos"
+          }
+        }
+      }
+    ]
+  }
+]

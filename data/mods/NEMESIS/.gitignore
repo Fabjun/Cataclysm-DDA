@@ -1,0 +1,7 @@
+# Debug patch backups — never commit
+*.json.bak
+generated/*.json.bak
+
+# Python cache
+__pycache__/
+*.pyc

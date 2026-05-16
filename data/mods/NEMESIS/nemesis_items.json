@@ -1,0 +1,16 @@
+[
+  {
+    "//": "nemesis_memento — base / generic memento item. This is the static fallback version defined here so the mod has a valid, loadable item entry even before any Nemesis is generated. Per-character mementos are generated dynamically by nemesis_builder.build_memento_item() with unique IDs following the pattern nemesis_memento_<safe_name> (e.g., nemesis_memento_alice_smith_0042). Each per-character memento carries a character-specific name, an atmospheric description line chosen from the cause of death, and a death-narrative sentence. They are embedded directly into the per-character JSON files and do not appear here. The base memento here uses a generic description and serves as a fallback to prevent null-item spawn errors if a Nemesis somehow lacks a per-character entry. Physical properties: lightweight (50 g, 250 ml) to fit in a pocket, leather material for flavour, NO_REPAIR flag so it cannot be modified or improved, price 0 because mementos have no trade value.",
+    "type": "ITEM",
+    "id": "nemesis_memento",
+    "name": { "str": "nemesis memento", "str_pl": "nemesis mementos" },
+    "description": "A token left by a fallen nemesis. The tattered remains hint at a life lived — and lost — before yours began.",
+    "weight": "50 g",
+    "volume": "250 ml",
+    "price": "0 cent",
+    "material": [ "leather" ],
+    "symbol": "?",
+    "color": "dark_gray",
+    "flags": [ "NO_REPAIR" ]
+  }
+]

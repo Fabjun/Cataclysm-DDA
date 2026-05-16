@@ -1,0 +1,545 @@
+[
+  {
+    "type": "faction",
+    "id": "nemesis_faction_hunter_clark_0006",
+    "name": "Nemesis (hunter_clark_0006)",
+    "likes_u": -100,
+    "respects_u": -100,
+    "known_by_u": true,
+    "description": "A nemesis returned from death.",
+    "size": 1,
+    "power": 100,
+    "wealth": 0,
+    "fac_food_supply": [
+      [
+        0,
+        {
+          "calories": 0,
+          "vitamins": {}
+        }
+      ]
+    ],
+    "mon_faction": "zombie",
+    "relations": {
+      "old_guard": {
+        "kill on sight": true
+      },
+      "free_merchants": {
+        "kill on sight": true
+      },
+      "tacoma_commune": {
+        "kill on sight": true
+      },
+      "your_followers": {
+        "kill on sight": true
+      },
+      "robofac": {
+        "kill on sight": true
+      },
+      "exodii": {
+        "kill on sight": true
+      }
+    }
+  },
+  {
+    "type": "ITEM",
+    "id": "nemesis_memento_hunter_clark_0006",
+    "name": {
+      "str": "memento — Hunter Clark"
+    },
+    "description": "\"Scorched and warped. It survived something that shouldn't have been survived.\" - Hunter Clark goes out as they came in — with a bang.",
+    "weight": "50 g",
+    "volume": "250 ml",
+    "price": "0 cent",
+    "material": [
+      "leather"
+    ],
+    "symbol": "?",
+    "color": "dark_gray",
+    "flags": [
+      "NO_REPAIR"
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "nem_worn_hunter_clark_0006",
+    "subtype": "collection",
+    "entries": [
+      {
+        "item": "helmet_army",
+        "prob": 100,
+        "damage": [
+          2,
+          2
+        ],
+        "custom-flags": [
+          "FILTHY"
+        ]
+      },
+      {
+        "item": "gloves_leather",
+        "prob": 100,
+        "damage": [
+          1,
+          1
+        ],
+        "custom-flags": [
+          "FILTHY"
+        ]
+      },
+      {
+        "item": "armor_riot",
+        "prob": 100,
+        "damage": [
+          2,
+          2
+        ],
+        "custom-flags": [
+          "FILTHY"
+        ]
+      },
+      {
+        "item": "wetsuit_pants_thin",
+        "prob": 100,
+        "damage": [
+          1,
+          1
+        ],
+        "custom-flags": [
+          "FILTHY"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "nem_carry_hunter_clark_0006",
+    "subtype": "collection",
+    "entries": [
+      {
+        "item": "antibiotics",
+        "prob": 100,
+        "damage": [
+          1,
+          1
+        ]
+      },
+      {
+        "item": "porkbelly",
+        "prob": 100,
+        "damage": [
+          2,
+          2
+        ]
+      },
+      {
+        "item": "morphine",
+        "prob": 100
+      },
+      {
+        "item": "gum",
+        "prob": 100,
+        "damage": [
+          2,
+          2
+        ]
+      },
+      {
+        "item": "donut_holes",
+        "prob": 100,
+        "damage": [
+          2,
+          2
+        ]
+      },
+      {
+        "item": "shot_00",
+        "prob": 100,
+        "charges": [
+          3,
+          3
+        ]
+      }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "nem_weapon_hunter_clark_0006",
+    "subtype": "collection",
+    "entries": [
+      {
+        "item": "shotgun_triple",
+        "prob": 100,
+        "damage": [
+          1,
+          1
+        ],
+        "charges": [
+          2,
+          2
+        ],
+        "ammo-item": "shot_00"
+      }
+    ]
+  },
+  {
+    "type": "npc_class",
+    "id": "NC_NEMESIS_hunter_clark_0006",
+    "name": {
+      "str": "Nemesis (Hunter Clark)"
+    },
+    "job_description": "Famous last words: \"MOVE!\" Stood too close to a very big boom.",
+    "common": false,
+    "bonus_str": 4,
+    "bonus_dex": 2,
+    "bonus_int": 2,
+    "bonus_per": 6,
+    "worn_override": "nem_worn_hunter_clark_0006",
+    "carry_override": "nem_carry_hunter_clark_0006",
+    "weapon_override": "nem_weapon_hunter_clark_0006",
+    "traits": [
+      [
+        "NEMESIS_MARK",
+        100
+      ],
+      [
+        "DEAF",
+        100
+      ],
+      [
+        "FACIAL_HAIR_NONE",
+        100
+      ]
+    ],
+    "skills": [
+      {
+        "skill": "bashing",
+        "level": {
+          "constant": 4
+        }
+      },
+      {
+        "skill": "dodge",
+        "level": {
+          "constant": 4
+        }
+      },
+      {
+        "skill": "gun",
+        "level": {
+          "constant": 4
+        }
+      },
+      {
+        "skill": "melee",
+        "level": {
+          "constant": 4
+        }
+      },
+      {
+        "skill": "pistol",
+        "level": {
+          "constant": 3
+        }
+      },
+      {
+        "skill": "shotgun",
+        "level": {
+          "constant": 3
+        }
+      },
+      {
+        "skill": "stabbing",
+        "level": {
+          "constant": 2
+        }
+      },
+      {
+        "skill": "survival",
+        "level": {
+          "constant": 2
+        }
+      }
+    ]
+  },
+  {
+    "type": "npc",
+    "id": "npc_nemesis_hunter_clark_0006",
+    "name_unique": "Hunter Clark",
+    "class": "NC_NEMESIS_hunter_clark_0006",
+    "attitude": 10,
+    "mission": 0,
+    "chat": "TALK_DONE",
+    "faction": "nemesis_faction_hunter_clark_0006",
+    "death_eocs": [
+      {
+        "id": "EOC_NEMESIS_DEATH_inline_npc_nemesis_hunter_clark_0006",
+        "eoc_type": "NPC_DEATH",
+        "effect": [
+          {
+            "math": [
+              "global_nemesis_just_died_hunter_clark_0006 = 1"
+            ]
+          },
+          {
+            "math": [
+              "global_nemesis_spawned_hunter_clark_0006 = 3"
+            ]
+          },
+          {
+            "u_spawn_item": "nemesis_memento_hunter_clark_0006",
+            "count": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_SPAWN_CHECK_hunter_clark_0006",
+    "eoc_type": "ACTIVATION",
+    "condition": {
+      "and": [
+        {
+          "math": [
+            "global_nemesis_spawn_lock == 0"
+          ]
+        },
+        {
+          "math": [
+            "global_nemesis_spawned_hunter_clark_0006 == 1"
+          ]
+        },
+        {
+          "math": [
+            "time_since(global_nemesis_char_start_hunter_clark_0006) >= time('58 days')"
+          ]
+        },
+        {
+          "not": "u_is_outside"
+        }
+      ]
+    },
+    "effect": [
+      {
+        "u_spawn_npc": "npc_nemesis_hunter_clark_0006",
+        "unique_id": "nemesis_hunter_clark_0006",
+        "real_count": 1,
+        "min_radius": 40,
+        "max_radius": 55,
+        "true_eocs": [
+          "EOC_NEMESIS_SPAWN_SUCCESS_hunter_clark_0006"
+        ]
+      }
+    ],
+    "false_effect": [
+      {
+        "if": {
+          "math": [
+            "global_nemesis_spawned_hunter_clark_0006 == 0"
+          ]
+        },
+        "then": [
+          {
+            "math": [
+              "global_nemesis_spawned_hunter_clark_0006 = 1"
+            ]
+          },
+          {
+            "math": [
+              "global_nemesis_char_start_hunter_clark_0006 = time('now')"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_SPAWN_SUCCESS_hunter_clark_0006",
+    "eoc_type": "ACTIVATION",
+    "effect": [
+      {
+        "math": [
+          "global_nemesis_spawned_hunter_clark_0006 = 2"
+        ]
+      },
+      {
+        "math": [
+          "global_nemesis_last_spawn = time('now')"
+        ]
+      },
+      {
+        "math": [
+          "global_nemesis_spawn_lock = 1"
+        ]
+      },
+      {
+        "if": {
+          "math": [
+            "u_val('perception') >= 10"
+          ]
+        },
+        "then": {
+          "u_message": "<color_red>A chill runs down your spine... Hunter Clark has returned from the grave.</color>",
+          "type": "bad"
+        }
+      },
+      {
+        "u_run_npc_eocs": [
+          "EOC_NEMESIS_WOUNDS_hunter_clark_0006"
+        ],
+        "unique_ids": [
+          "nemesis_hunter_clark_0006"
+        ]
+      },
+      {
+        "u_run_npc_eocs": [
+          "EOC_NEMESIS_EFFECTS_hunter_clark_0006"
+        ],
+        "unique_ids": [
+          "nemesis_hunter_clark_0006"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_DEATH_NOTIFY_hunter_clark_0006",
+    "eoc_type": "ACTIVATION",
+    "condition": {
+      "math": [
+        "global_nemesis_just_died_hunter_clark_0006 == 1"
+      ]
+    },
+    "effect": [
+      {
+        "u_message": "<color_green>Hunter Clark goes out as they came in — with a bang.</color>",
+        "type": "good"
+      },
+      {
+        "u_message": "A weight lifts from your shoulders. It's over.",
+        "type": "good"
+      },
+      {
+        "u_add_morale": "morale_nemesis_justice",
+        "bonus": 20,
+        "max_bonus": 20,
+        "duration": "6 hours",
+        "decay_start": "3 hours"
+      },
+      {
+        "math": [
+          "global_nemesis_just_died_hunter_clark_0006 = 0"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_WOUNDS_hunter_clark_0006",
+    "eoc_type": "ACTIVATION",
+    "effect": [
+      {
+        "math": [
+          "u_hp('arm_l') = u_hp_max('arm_l') * 0.05"
+        ]
+      },
+      {
+        "math": [
+          "u_hp('arm_r') = u_hp_max('arm_r') * 0.51"
+        ]
+      },
+      {
+        "math": [
+          "u_hp('head') = u_hp_max('head') * 0.51"
+        ]
+      },
+      {
+        "math": [
+          "u_hp('leg_l') = u_hp_max('leg_l') * 0.54"
+        ]
+      },
+      {
+        "math": [
+          "u_hp('leg_r') = u_hp_max('leg_r') * 0.59"
+        ]
+      },
+      {
+        "math": [
+          "u_hp('torso') = u_hp_max('torso') * 0.4"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_EFFECTS_hunter_clark_0006",
+    "eoc_type": "ACTIVATION",
+    "effect": []
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_HUNT_REDIRECT_hunter_clark_0006",
+    "eoc_type": "EVENT",
+    "required_event": "avatar_enters_omt",
+    "condition": {
+      "math": [
+        "global_nemesis_spawned_hunter_clark_0006 == 2"
+      ]
+    },
+    "effect": [
+      {
+        "u_location_variable": {
+          "global_val": "global_nemesis_player_ms_pos"
+        },
+        "min_radius": 0,
+        "max_radius": 0
+      },
+      {
+        "math": [
+          "global_player_omt_x = u_val('pos_x') / 24"
+        ]
+      },
+      {
+        "math": [
+          "global_player_omt_y = u_val('pos_y') / 24"
+        ]
+      },
+      {
+        "u_run_npc_eocs": [
+          "EOC_NEMESIS_REDIRECT_NPC_hunter_clark_0006"
+        ],
+        "unique_ids": [
+          "nemesis_hunter_clark_0006"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_REDIRECT_NPC_hunter_clark_0006",
+    "eoc_type": "ACTIVATION",
+    "condition": {
+      "u_has_effect": "NEMESIS_HUNTING"
+    },
+    "effect": [
+      {
+        "location_variable_adjust": {
+          "global_val": "global_nemesis_player_ms_pos"
+        },
+        "output_var": {
+          "u_val": "nemesis_last_tracked_pos"
+        }
+      },
+      {
+        "u_set_goal": {
+          "om_terrain": "field",
+          "var": {
+            "u_val": "nemesis_last_tracked_pos"
+          }
+        }
+      }
+    ]
+  }
+]

@@ -1,0 +1,572 @@
+[
+  {
+    "type": "faction",
+    "id": "nemesis_faction_neil_robinson_0005",
+    "name": "Nemesis (neil_robinson_0005)",
+    "likes_u": -100,
+    "respects_u": -100,
+    "known_by_u": true,
+    "description": "A nemesis returned from death.",
+    "size": 1,
+    "power": 100,
+    "wealth": 0,
+    "fac_food_supply": [
+      [
+        0,
+        {
+          "calories": 0,
+          "vitamins": {}
+        }
+      ]
+    ],
+    "mon_faction": "zombie",
+    "relations": {
+      "old_guard": {
+        "kill on sight": true
+      },
+      "free_merchants": {
+        "kill on sight": true
+      },
+      "tacoma_commune": {
+        "kill on sight": true
+      },
+      "your_followers": {
+        "kill on sight": true
+      },
+      "robofac": {
+        "kill on sight": true
+      },
+      "exodii": {
+        "kill on sight": true
+      }
+    }
+  },
+  {
+    "type": "ITEM",
+    "id": "nemesis_memento_neil_robinson_0005",
+    "name": {
+      "str": "memento — Neil Robinson"
+    },
+    "description": "\"Bent and sprung. Someone's last surprise.\" - Neil Robinson falls once more — this time for good.",
+    "weight": "50 g",
+    "volume": "250 ml",
+    "price": "0 cent",
+    "material": [
+      "leather"
+    ],
+    "symbol": "?",
+    "color": "dark_gray",
+    "flags": [
+      "NO_REPAIR"
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "nem_worn_neil_robinson_0005",
+    "subtype": "collection",
+    "entries": [
+      {
+        "item": "holster",
+        "prob": 100,
+        "damage": [
+          1,
+          1
+        ],
+        "custom-flags": [
+          "FILTHY"
+        ]
+      },
+      {
+        "item": "chestrig",
+        "prob": 100,
+        "damage": [
+          1,
+          1
+        ],
+        "custom-flags": [
+          "FILTHY"
+        ]
+      },
+      {
+        "item": "armor_qt_chestplate",
+        "prob": 100,
+        "damage": [
+          1,
+          1
+        ],
+        "custom-flags": [
+          "FILTHY"
+        ]
+      },
+      {
+        "item": "armor_mercenary_bottom",
+        "prob": 100,
+        "damage": [
+          2,
+          2
+        ],
+        "custom-flags": [
+          "FILTHY"
+        ]
+      },
+      {
+        "item": "iotv_shoulder_plate",
+        "prob": 100,
+        "damage": [
+          2,
+          2
+        ],
+        "custom-flags": [
+          "FILTHY"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "nem_carry_neil_robinson_0005",
+    "subtype": "collection",
+    "entries": [
+      {
+        "item": "adhesive_bandages",
+        "prob": 100,
+        "damage": [
+          2,
+          2
+        ]
+      },
+      {
+        "item": "caffeine",
+        "prob": 100,
+        "damage": [
+          1,
+          1
+        ]
+      },
+      {
+        "item": "can_tomato",
+        "prob": 100,
+        "damage": [
+          2,
+          2
+        ]
+      },
+      {
+        "item": "duct_tape",
+        "prob": 100,
+        "damage": [
+          2,
+          2
+        ]
+      },
+      {
+        "item": "shot_00",
+        "prob": 100,
+        "charges": [
+          2,
+          2
+        ]
+      }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "nem_weapon_neil_robinson_0005",
+    "subtype": "collection",
+    "entries": [
+      {
+        "item": "slamfire_shotgun_d",
+        "prob": 100,
+        "damage": [
+          2,
+          2
+        ],
+        "charges": [
+          1,
+          1
+        ],
+        "ammo-item": "shot_00"
+      }
+    ]
+  },
+  {
+    "type": "npc_class",
+    "id": "NC_NEMESIS_neil_robinson_0005",
+    "name": {
+      "str": "Nemesis (Neil Robinson)"
+    },
+    "job_description": "Famous last words: \"I KNEW something was off.\" The floor was a trap. Literally.",
+    "common": false,
+    "bonus_str": 2,
+    "bonus_dex": 2,
+    "bonus_int": 6,
+    "bonus_per": 1,
+    "worn_override": "nem_worn_neil_robinson_0005",
+    "carry_override": "nem_carry_neil_robinson_0005",
+    "weapon_override": "nem_weapon_neil_robinson_0005",
+    "traits": [
+      [
+        "NEMESIS_MARK",
+        100
+      ],
+      [
+        "CLUMSY",
+        100
+      ],
+      [
+        "FACIAL_HAIR_ANCHOR",
+        100
+      ]
+    ],
+    "bionics": [
+      {
+        "id": [
+          "bio_painkiller"
+        ],
+        "chance": 100
+      }
+    ],
+    "skills": [
+      {
+        "skill": "bashing",
+        "level": {
+          "constant": 2
+        }
+      },
+      {
+        "skill": "dodge",
+        "level": {
+          "constant": 3
+        }
+      },
+      {
+        "skill": "gun",
+        "level": {
+          "constant": 3
+        }
+      },
+      {
+        "skill": "melee",
+        "level": {
+          "constant": 5
+        }
+      },
+      {
+        "skill": "pistol",
+        "level": {
+          "constant": 4
+        }
+      },
+      {
+        "skill": "shotgun",
+        "level": {
+          "constant": 3
+        }
+      },
+      {
+        "skill": "stabbing",
+        "level": {
+          "constant": 3
+        }
+      },
+      {
+        "skill": "survival",
+        "level": {
+          "constant": 3
+        }
+      }
+    ]
+  },
+  {
+    "type": "npc",
+    "id": "npc_nemesis_neil_robinson_0005",
+    "name_unique": "Neil Robinson",
+    "class": "NC_NEMESIS_neil_robinson_0005",
+    "attitude": 10,
+    "mission": 0,
+    "chat": "TALK_DONE",
+    "faction": "nemesis_faction_neil_robinson_0005",
+    "death_eocs": [
+      {
+        "id": "EOC_NEMESIS_DEATH_inline_npc_nemesis_neil_robinson_0005",
+        "eoc_type": "NPC_DEATH",
+        "effect": [
+          {
+            "math": [
+              "global_nemesis_just_died_neil_robinson_0005 = 1"
+            ]
+          },
+          {
+            "math": [
+              "global_nemesis_spawned_neil_robinson_0005 = 3"
+            ]
+          },
+          {
+            "u_spawn_item": "nemesis_memento_neil_robinson_0005",
+            "count": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_SPAWN_CHECK_neil_robinson_0005",
+    "eoc_type": "ACTIVATION",
+    "condition": {
+      "and": [
+        {
+          "math": [
+            "global_nemesis_spawn_lock == 0"
+          ]
+        },
+        {
+          "math": [
+            "global_nemesis_spawned_neil_robinson_0005 == 1"
+          ]
+        },
+        {
+          "math": [
+            "time_since(global_nemesis_char_start_neil_robinson_0005) >= time('47 days')"
+          ]
+        },
+        {
+          "not": "u_is_outside"
+        }
+      ]
+    },
+    "effect": [
+      {
+        "u_spawn_npc": "npc_nemesis_neil_robinson_0005",
+        "unique_id": "nemesis_neil_robinson_0005",
+        "real_count": 1,
+        "min_radius": 40,
+        "max_radius": 55,
+        "true_eocs": [
+          "EOC_NEMESIS_SPAWN_SUCCESS_neil_robinson_0005"
+        ]
+      }
+    ],
+    "false_effect": [
+      {
+        "if": {
+          "math": [
+            "global_nemesis_spawned_neil_robinson_0005 == 0"
+          ]
+        },
+        "then": [
+          {
+            "math": [
+              "global_nemesis_spawned_neil_robinson_0005 = 1"
+            ]
+          },
+          {
+            "math": [
+              "global_nemesis_char_start_neil_robinson_0005 = time('now')"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_SPAWN_SUCCESS_neil_robinson_0005",
+    "eoc_type": "ACTIVATION",
+    "effect": [
+      {
+        "math": [
+          "global_nemesis_spawned_neil_robinson_0005 = 2"
+        ]
+      },
+      {
+        "math": [
+          "global_nemesis_last_spawn = time('now')"
+        ]
+      },
+      {
+        "math": [
+          "global_nemesis_spawn_lock = 1"
+        ]
+      },
+      {
+        "if": {
+          "math": [
+            "u_val('perception') >= 10"
+          ]
+        },
+        "then": {
+          "u_message": "<color_red>A chill runs down your spine... Neil Robinson has returned from the grave.</color>",
+          "type": "bad"
+        }
+      },
+      {
+        "u_run_npc_eocs": [
+          "EOC_NEMESIS_WOUNDS_neil_robinson_0005"
+        ],
+        "unique_ids": [
+          "nemesis_neil_robinson_0005"
+        ]
+      },
+      {
+        "u_run_npc_eocs": [
+          "EOC_NEMESIS_EFFECTS_neil_robinson_0005"
+        ],
+        "unique_ids": [
+          "nemesis_neil_robinson_0005"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_DEATH_NOTIFY_neil_robinson_0005",
+    "eoc_type": "ACTIVATION",
+    "condition": {
+      "math": [
+        "global_nemesis_just_died_neil_robinson_0005 == 1"
+      ]
+    },
+    "effect": [
+      {
+        "u_message": "<color_green>Neil Robinson falls once more — this time for good.</color>",
+        "type": "good"
+      },
+      {
+        "u_message": "A weight lifts from your shoulders. It's over.",
+        "type": "good"
+      },
+      {
+        "u_add_morale": "morale_nemesis_justice",
+        "bonus": 20,
+        "max_bonus": 20,
+        "duration": "6 hours",
+        "decay_start": "3 hours"
+      },
+      {
+        "math": [
+          "global_nemesis_just_died_neil_robinson_0005 = 0"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_WOUNDS_neil_robinson_0005",
+    "eoc_type": "ACTIVATION",
+    "effect": [
+      {
+        "math": [
+          "u_hp('arm_l') = u_hp_max('arm_l') * 0.43"
+        ]
+      },
+      {
+        "math": [
+          "u_hp('arm_r') = u_hp_max('arm_r') * 0.28"
+        ]
+      },
+      {
+        "math": [
+          "u_hp('head') = u_hp_max('head') * 0.35"
+        ]
+      },
+      {
+        "math": [
+          "u_hp('leg_l') = u_hp_max('leg_l') * 0.31"
+        ]
+      },
+      {
+        "math": [
+          "u_hp('leg_r') = u_hp_max('leg_r') * 0.25"
+        ]
+      },
+      {
+        "math": [
+          "u_hp('torso') = u_hp_max('torso') * 0.34"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_EFFECTS_neil_robinson_0005",
+    "eoc_type": "ACTIVATION",
+    "effect": [
+      {
+        "u_add_effect": "beartrap",
+        "duration": 300
+      },
+      {
+        "u_add_effect": "bleed",
+        "duration": 120
+      },
+      {
+        "u_learn_martial_art": "style_capoeira"
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_HUNT_REDIRECT_neil_robinson_0005",
+    "eoc_type": "EVENT",
+    "required_event": "avatar_enters_omt",
+    "condition": {
+      "math": [
+        "global_nemesis_spawned_neil_robinson_0005 == 2"
+      ]
+    },
+    "effect": [
+      {
+        "u_location_variable": {
+          "global_val": "global_nemesis_player_ms_pos"
+        },
+        "min_radius": 0,
+        "max_radius": 0
+      },
+      {
+        "math": [
+          "global_player_omt_x = u_val('pos_x') / 24"
+        ]
+      },
+      {
+        "math": [
+          "global_player_omt_y = u_val('pos_y') / 24"
+        ]
+      },
+      {
+        "u_run_npc_eocs": [
+          "EOC_NEMESIS_REDIRECT_NPC_neil_robinson_0005"
+        ],
+        "unique_ids": [
+          "nemesis_neil_robinson_0005"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_REDIRECT_NPC_neil_robinson_0005",
+    "eoc_type": "ACTIVATION",
+    "condition": {
+      "u_has_effect": "NEMESIS_HUNTING"
+    },
+    "effect": [
+      {
+        "location_variable_adjust": {
+          "global_val": "global_nemesis_player_ms_pos"
+        },
+        "output_var": {
+          "u_val": "nemesis_last_tracked_pos"
+        }
+      },
+      {
+        "u_set_goal": {
+          "om_terrain": "field",
+          "var": {
+            "u_val": "nemesis_last_tracked_pos"
+          }
+        }
+      }
+    ]
+  }
+]

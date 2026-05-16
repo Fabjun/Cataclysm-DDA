@@ -1,0 +1,12 @@
+[
+  {
+    "//": "NEMESIS System mod. Generates a persistent hostile NPC from the dead player's save file. The Nemesis inherits the player's stats, skills, bionics, mutations, equipment, and cause of death, then spawns in the game world after a delay proportional to how powerful the player was. SETUP: After each death run: python3 nemesis_launcher.py <path/to/character.sav>. For cold-start worlds run: python3 nemesis_seeder.py. Both scripts write JSON files into this mod directory and recompile nemesis_master.json automatically.",
+    "type": "MOD_INFO",
+    "id": "nemesis_mod",
+    "name": "Nemesis System",
+    "authors": [ "Du & Ich" ],
+    "description": "Generates a hostile NPC from the dead player's save file. Run nemesis_launcher.py after each death.",
+    "category": "content",
+    "dependencies": [ "dda" ]
+  }
+]

@@ -1,0 +1,501 @@
+[
+  {
+    "type": "faction",
+    "id": "nemesis_faction_carol_martin_0000",
+    "name": "Nemesis (carol_martin_0000)",
+    "likes_u": -100,
+    "respects_u": -100,
+    "known_by_u": true,
+    "description": "A nemesis returned from death.",
+    "size": 1,
+    "power": 100,
+    "wealth": 0,
+    "fac_food_supply": [
+      [
+        0,
+        {
+          "calories": 0,
+          "vitamins": {}
+        }
+      ]
+    ],
+    "mon_faction": "zombie",
+    "relations": {
+      "old_guard": {
+        "kill on sight": true
+      },
+      "free_merchants": {
+        "kill on sight": true
+      },
+      "tacoma_commune": {
+        "kill on sight": true
+      },
+      "your_followers": {
+        "kill on sight": true
+      },
+      "robofac": {
+        "kill on sight": true
+      },
+      "exodii": {
+        "kill on sight": true
+      }
+    }
+  },
+  {
+    "type": "ITEM",
+    "id": "nemesis_memento_carol_martin_0000",
+    "name": {
+      "str": "memento — Carol Martin"
+    },
+    "description": "\"Worn down to almost nothing. Like them.\" - Carol Martin is finally allowed to rest.",
+    "weight": "50 g",
+    "volume": "250 ml",
+    "price": "0 cent",
+    "material": [
+      "leather"
+    ],
+    "symbol": "?",
+    "color": "dark_gray",
+    "flags": [
+      "NO_REPAIR"
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "nem_worn_carol_martin_0000",
+    "subtype": "collection",
+    "entries": [
+      {
+        "item": "gloves_winter",
+        "prob": 100,
+        "damage": [
+          2,
+          2
+        ],
+        "custom-flags": [
+          "FILTHY"
+        ]
+      },
+      {
+        "item": "cheerleader_top_short",
+        "prob": 100,
+        "damage": [
+          2,
+          2
+        ],
+        "custom-flags": [
+          "FILTHY"
+        ]
+      },
+      {
+        "item": "mask_ski_loose",
+        "prob": 100,
+        "damage": [
+          2,
+          2
+        ],
+        "custom-flags": [
+          "FILTHY"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "nem_carry_carol_martin_0000",
+    "subtype": "collection",
+    "entries": [
+      {
+        "item": "bonemeal_tablet",
+        "prob": 100,
+        "damage": [
+          2,
+          2
+        ]
+      },
+      {
+        "item": "pockknife",
+        "prob": 100,
+        "damage": [
+          4,
+          4
+        ]
+      },
+      {
+        "item": "matches",
+        "prob": 100
+      },
+      {
+        "item": "bleach",
+        "prob": 100,
+        "damage": [
+          4,
+          4
+        ]
+      },
+      {
+        "item": "flashlight",
+        "prob": 100,
+        "damage": [
+          4,
+          4
+        ]
+      }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "nem_weapon_carol_martin_0000",
+    "subtype": "collection",
+    "entries": [
+      {
+        "item": "pike",
+        "prob": 100,
+        "damage": [
+          3,
+          3
+        ]
+      }
+    ]
+  },
+  {
+    "type": "npc_class",
+    "id": "NC_NEMESIS_carol_martin_0000",
+    "name": {
+      "str": "Nemesis (Carol Martin)"
+    },
+    "job_description": "Famous last words: \"I was so close to finding food.\" Forgot to eat. For too long.",
+    "common": false,
+    "bonus_str": -1,
+    "bonus_dex": 0,
+    "bonus_int": 2,
+    "bonus_per": 0,
+    "worn_override": "nem_worn_carol_martin_0000",
+    "carry_override": "nem_carry_carol_martin_0000",
+    "weapon_override": "nem_weapon_carol_martin_0000",
+    "traits": [
+      [
+        "NEMESIS_MARK",
+        100
+      ],
+      [
+        "HUNGER3",
+        100
+      ],
+      [
+        "LIGHTWEIGHT",
+        100
+      ],
+      [
+        "FACIAL_HAIR_WALRUS",
+        100
+      ]
+    ],
+    "skills": [
+      {
+        "skill": "bashing",
+        "level": {
+          "constant": 3
+        }
+      },
+      {
+        "skill": "dodge",
+        "level": {
+          "constant": 2
+        }
+      },
+      {
+        "skill": "melee",
+        "level": {
+          "constant": 2
+        }
+      },
+      {
+        "skill": "survival",
+        "level": {
+          "constant": 3
+        }
+      }
+    ]
+  },
+  {
+    "type": "npc",
+    "id": "npc_nemesis_carol_martin_0000",
+    "name_unique": "Carol Martin",
+    "class": "NC_NEMESIS_carol_martin_0000",
+    "attitude": 10,
+    "mission": 0,
+    "chat": "TALK_DONE",
+    "faction": "nemesis_faction_carol_martin_0000",
+    "death_eocs": [
+      {
+        "id": "EOC_NEMESIS_DEATH_inline_npc_nemesis_carol_martin_0000",
+        "eoc_type": "NPC_DEATH",
+        "effect": [
+          {
+            "math": [
+              "global_nemesis_just_died_carol_martin_0000 = 1"
+            ]
+          },
+          {
+            "math": [
+              "global_nemesis_spawned_carol_martin_0000 = 3"
+            ]
+          },
+          {
+            "u_spawn_item": "nemesis_memento_carol_martin_0000",
+            "count": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_SPAWN_CHECK_carol_martin_0000",
+    "eoc_type": "ACTIVATION",
+    "condition": {
+      "and": [
+        {
+          "math": [
+            "global_nemesis_spawn_lock == 0"
+          ]
+        },
+        {
+          "math": [
+            "global_nemesis_spawned_carol_martin_0000 == 1"
+          ]
+        },
+        {
+          "math": [
+            "time_since(global_nemesis_char_start_carol_martin_0000) >= time('1 days')"
+          ]
+        },
+        {
+          "not": "u_is_outside"
+        }
+      ]
+    },
+    "effect": [
+      {
+        "u_spawn_npc": "npc_nemesis_carol_martin_0000",
+        "unique_id": "nemesis_carol_martin_0000",
+        "real_count": 1,
+        "min_radius": 40,
+        "max_radius": 55,
+        "true_eocs": [
+          "EOC_NEMESIS_SPAWN_SUCCESS_carol_martin_0000"
+        ]
+      }
+    ],
+    "false_effect": [
+      {
+        "if": {
+          "math": [
+            "global_nemesis_spawned_carol_martin_0000 == 0"
+          ]
+        },
+        "then": [
+          {
+            "math": [
+              "global_nemesis_spawned_carol_martin_0000 = 1"
+            ]
+          },
+          {
+            "math": [
+              "global_nemesis_char_start_carol_martin_0000 = time('now')"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_SPAWN_SUCCESS_carol_martin_0000",
+    "eoc_type": "ACTIVATION",
+    "effect": [
+      {
+        "math": [
+          "global_nemesis_spawned_carol_martin_0000 = 2"
+        ]
+      },
+      {
+        "math": [
+          "global_nemesis_last_spawn = time('now')"
+        ]
+      },
+      {
+        "math": [
+          "global_nemesis_spawn_lock = 1"
+        ]
+      },
+      {
+        "if": {
+          "math": [
+            "u_val('perception') >= 10"
+          ]
+        },
+        "then": {
+          "u_message": "<color_red>A chill runs down your spine... Carol Martin has returned from the grave.</color>",
+          "type": "bad"
+        }
+      },
+      {
+        "u_run_npc_eocs": [
+          "EOC_NEMESIS_WOUNDS_carol_martin_0000"
+        ],
+        "unique_ids": [
+          "nemesis_carol_martin_0000"
+        ]
+      },
+      {
+        "u_run_npc_eocs": [
+          "EOC_NEMESIS_EFFECTS_carol_martin_0000"
+        ],
+        "unique_ids": [
+          "nemesis_carol_martin_0000"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_DEATH_NOTIFY_carol_martin_0000",
+    "eoc_type": "ACTIVATION",
+    "condition": {
+      "math": [
+        "global_nemesis_just_died_carol_martin_0000 == 1"
+      ]
+    },
+    "effect": [
+      {
+        "u_message": "<color_green>Carol Martin is finally allowed to rest.</color>",
+        "type": "good"
+      },
+      {
+        "u_message": "A weight lifts from your shoulders. It's over.",
+        "type": "good"
+      },
+      {
+        "u_add_morale": "morale_nemesis_justice",
+        "bonus": 20,
+        "max_bonus": 20,
+        "duration": "6 hours",
+        "decay_start": "3 hours"
+      },
+      {
+        "math": [
+          "global_nemesis_just_died_carol_martin_0000 = 0"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_WOUNDS_carol_martin_0000",
+    "eoc_type": "ACTIVATION",
+    "effect": [
+      {
+        "math": [
+          "u_hp('arm_l') = u_hp_max('arm_l') * 0.2"
+        ]
+      },
+      {
+        "math": [
+          "u_hp('arm_r') = u_hp_max('arm_r') * 0.05"
+        ]
+      },
+      {
+        "math": [
+          "u_hp('head') = u_hp_max('head') * 0.23"
+        ]
+      },
+      {
+        "math": [
+          "u_hp('leg_l') = u_hp_max('leg_l') * 0.21"
+        ]
+      },
+      {
+        "math": [
+          "u_hp('leg_r') = u_hp_max('leg_r') * 0.12"
+        ]
+      },
+      {
+        "math": [
+          "u_hp('torso') = u_hp_max('torso') * 0.19"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_EFFECTS_carol_martin_0000",
+    "eoc_type": "ACTIVATION",
+    "effect": []
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_HUNT_REDIRECT_carol_martin_0000",
+    "eoc_type": "EVENT",
+    "required_event": "avatar_enters_omt",
+    "condition": {
+      "math": [
+        "global_nemesis_spawned_carol_martin_0000 == 2"
+      ]
+    },
+    "effect": [
+      {
+        "u_location_variable": {
+          "global_val": "global_nemesis_player_ms_pos"
+        },
+        "min_radius": 0,
+        "max_radius": 0
+      },
+      {
+        "math": [
+          "global_player_omt_x = u_val('pos_x') / 24"
+        ]
+      },
+      {
+        "math": [
+          "global_player_omt_y = u_val('pos_y') / 24"
+        ]
+      },
+      {
+        "u_run_npc_eocs": [
+          "EOC_NEMESIS_REDIRECT_NPC_carol_martin_0000"
+        ],
+        "unique_ids": [
+          "nemesis_carol_martin_0000"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_REDIRECT_NPC_carol_martin_0000",
+    "eoc_type": "ACTIVATION",
+    "condition": {
+      "u_has_effect": "NEMESIS_HUNTING"
+    },
+    "effect": [
+      {
+        "location_variable_adjust": {
+          "global_val": "global_nemesis_player_ms_pos"
+        },
+        "output_var": {
+          "u_val": "nemesis_last_tracked_pos"
+        }
+      },
+      {
+        "u_set_goal": {
+          "om_terrain": "field",
+          "var": {
+            "u_val": "nemesis_last_tracked_pos"
+          }
+        }
+      }
+    ]
+  }
+]

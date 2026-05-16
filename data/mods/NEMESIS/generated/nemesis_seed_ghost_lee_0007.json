@@ -1,0 +1,583 @@
+[
+  {
+    "type": "faction",
+    "id": "nemesis_faction_ghost_lee_0007",
+    "name": "Nemesis (ghost_lee_0007)",
+    "likes_u": -100,
+    "respects_u": -100,
+    "known_by_u": true,
+    "description": "A nemesis returned from death.",
+    "size": 1,
+    "power": 100,
+    "wealth": 0,
+    "fac_food_supply": [
+      [
+        0,
+        {
+          "calories": 0,
+          "vitamins": {}
+        }
+      ]
+    ],
+    "mon_faction": "zombie",
+    "relations": {
+      "old_guard": {
+        "kill on sight": true
+      },
+      "free_merchants": {
+        "kill on sight": true
+      },
+      "tacoma_commune": {
+        "kill on sight": true
+      },
+      "your_followers": {
+        "kill on sight": true
+      },
+      "robofac": {
+        "kill on sight": true
+      },
+      "exodii": {
+        "kill on sight": true
+      }
+    }
+  },
+  {
+    "type": "ITEM",
+    "id": "nemesis_memento_ghost_lee_0007",
+    "name": {
+      "str": "memento — Ghost Lee"
+    },
+    "description": "\"Clean incision marks along the edges. Surgery. Unsupervised.\" - The tortured soul of Ghost Lee has finally found peace.",
+    "weight": "50 g",
+    "volume": "250 ml",
+    "price": "0 cent",
+    "material": [
+      "leather"
+    ],
+    "symbol": "?",
+    "color": "dark_gray",
+    "flags": [
+      "NO_REPAIR"
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "nem_worn_ghost_lee_0007",
+    "subtype": "collection",
+    "entries": [
+      {
+        "item": "grenadebandolier",
+        "prob": 100,
+        "custom-flags": [
+          "FILTHY"
+        ]
+      },
+      {
+        "item": "fire_gauntlets",
+        "prob": 100,
+        "custom-flags": [
+          "FILTHY"
+        ]
+      },
+      {
+        "item": "winter_pants_army",
+        "prob": 100,
+        "damage": [
+          1,
+          1
+        ],
+        "custom-flags": [
+          "FILTHY"
+        ]
+      },
+      {
+        "item": "wearable_big_light",
+        "prob": 100,
+        "custom-flags": [
+          "FILTHY"
+        ]
+      },
+      {
+        "item": "wsurvivor_suit",
+        "prob": 100,
+        "custom-flags": [
+          "FILTHY"
+        ]
+      },
+      {
+        "item": "fishing_waders",
+        "prob": 100,
+        "custom-flags": [
+          "FILTHY"
+        ]
+      },
+      {
+        "item": "tac_helmet",
+        "prob": 100,
+        "custom-flags": [
+          "FILTHY"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "nem_carry_ghost_lee_0007",
+    "subtype": "collection",
+    "entries": [
+      {
+        "item": "grenade_emp",
+        "prob": 100,
+        "damage": [
+          1,
+          1
+        ]
+      },
+      {
+        "item": "c4",
+        "prob": 100,
+        "damage": [
+          1,
+          1
+        ]
+      },
+      {
+        "item": "grenade_inc",
+        "prob": 100
+      },
+      {
+        "item": "radio",
+        "prob": 100,
+        "damage": [
+          1,
+          1
+        ]
+      },
+      {
+        "item": "10mm_fmj",
+        "prob": 100,
+        "charges": [
+          30,
+          30
+        ]
+      },
+      {
+        "item": "tdi_10mm_mag",
+        "prob": 100,
+        "charges": [
+          30,
+          30
+        ],
+        "ammo-item": "10mm_fmj"
+      }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "nem_weapon_ghost_lee_0007",
+    "subtype": "collection",
+    "entries": [
+      {
+        "item": "glock_20",
+        "prob": 100,
+        "charges": [
+          27,
+          27
+        ],
+        "ammo-item": "10mm_fmj"
+      }
+    ]
+  },
+  {
+    "type": "npc_class",
+    "id": "NC_NEMESIS_ghost_lee_0007",
+    "name": {
+      "str": "Nemesis (Ghost Lee)"
+    },
+    "job_description": "Famous last words: \"The sedative isn't enough.\" Let a robot perform surgery. Unsupervised.",
+    "common": false,
+    "bonus_str": 9,
+    "bonus_dex": 9,
+    "bonus_int": 6,
+    "bonus_per": 9,
+    "worn_override": "nem_worn_ghost_lee_0007",
+    "carry_override": "nem_carry_ghost_lee_0007",
+    "weapon_override": "nem_weapon_ghost_lee_0007",
+    "traits": [
+      [
+        "MYOPIC",
+        100
+      ],
+      [
+        "NEMESIS_MARK",
+        100
+      ],
+      [
+        "CENOBITE",
+        100
+      ],
+      [
+        "FACIAL_HAIR_MUTTONCHOPS",
+        100
+      ]
+    ],
+    "bionics": [
+      {
+        "id": [
+          "bio_armor_torso"
+        ],
+        "chance": 100
+      }
+    ],
+    "skills": [
+      {
+        "skill": "archery",
+        "level": {
+          "constant": 5
+        }
+      },
+      {
+        "skill": "bashing",
+        "level": {
+          "constant": 5
+        }
+      },
+      {
+        "skill": "dodge",
+        "level": {
+          "constant": 10
+        }
+      },
+      {
+        "skill": "gun",
+        "level": {
+          "constant": 9
+        }
+      },
+      {
+        "skill": "melee",
+        "level": {
+          "constant": 9
+        }
+      },
+      {
+        "skill": "pistol",
+        "level": {
+          "constant": 4
+        }
+      },
+      {
+        "skill": "rifle",
+        "level": {
+          "constant": 7
+        }
+      },
+      {
+        "skill": "smg",
+        "level": {
+          "constant": 6
+        }
+      },
+      {
+        "skill": "stabbing",
+        "level": {
+          "constant": 6
+        }
+      },
+      {
+        "skill": "survival",
+        "level": {
+          "constant": 9
+        }
+      },
+      {
+        "skill": "throw",
+        "level": {
+          "constant": 3
+        }
+      }
+    ]
+  },
+  {
+    "type": "npc",
+    "id": "npc_nemesis_ghost_lee_0007",
+    "name_unique": "Ghost Lee",
+    "class": "NC_NEMESIS_ghost_lee_0007",
+    "attitude": 10,
+    "mission": 0,
+    "chat": "TALK_DONE",
+    "faction": "nemesis_faction_ghost_lee_0007",
+    "death_eocs": [
+      {
+        "id": "EOC_NEMESIS_DEATH_inline_npc_nemesis_ghost_lee_0007",
+        "eoc_type": "NPC_DEATH",
+        "effect": [
+          {
+            "math": [
+              "global_nemesis_just_died_ghost_lee_0007 = 1"
+            ]
+          },
+          {
+            "math": [
+              "global_nemesis_spawned_ghost_lee_0007 = 3"
+            ]
+          },
+          {
+            "u_spawn_item": "nemesis_memento_ghost_lee_0007",
+            "count": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_SPAWN_CHECK_ghost_lee_0007",
+    "eoc_type": "ACTIVATION",
+    "condition": {
+      "and": [
+        {
+          "math": [
+            "global_nemesis_spawn_lock == 0"
+          ]
+        },
+        {
+          "math": [
+            "global_nemesis_spawned_ghost_lee_0007 == 1"
+          ]
+        },
+        {
+          "math": [
+            "time_since(global_nemesis_char_start_ghost_lee_0007) >= time('92 days')"
+          ]
+        },
+        "u_is_outside"
+      ]
+    },
+    "effect": [
+      {
+        "u_spawn_npc": "npc_nemesis_ghost_lee_0007",
+        "unique_id": "nemesis_ghost_lee_0007",
+        "real_count": 1,
+        "min_radius": 40,
+        "max_radius": 55,
+        "true_eocs": [
+          "EOC_NEMESIS_SPAWN_SUCCESS_ghost_lee_0007"
+        ]
+      }
+    ],
+    "false_effect": [
+      {
+        "if": {
+          "math": [
+            "global_nemesis_spawned_ghost_lee_0007 == 0"
+          ]
+        },
+        "then": [
+          {
+            "math": [
+              "global_nemesis_spawned_ghost_lee_0007 = 1"
+            ]
+          },
+          {
+            "math": [
+              "global_nemesis_char_start_ghost_lee_0007 = time('now')"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_SPAWN_SUCCESS_ghost_lee_0007",
+    "eoc_type": "ACTIVATION",
+    "effect": [
+      {
+        "math": [
+          "global_nemesis_spawned_ghost_lee_0007 = 2"
+        ]
+      },
+      {
+        "math": [
+          "global_nemesis_last_spawn = time('now')"
+        ]
+      },
+      {
+        "math": [
+          "global_nemesis_spawn_lock = 1"
+        ]
+      },
+      {
+        "if": {
+          "math": [
+            "u_val('perception') >= 10"
+          ]
+        },
+        "then": {
+          "u_message": "<color_red>A chill runs down your spine... Ghost Lee has returned from the grave.</color>",
+          "type": "bad"
+        }
+      },
+      {
+        "u_run_npc_eocs": [
+          "EOC_NEMESIS_WOUNDS_ghost_lee_0007"
+        ],
+        "unique_ids": [
+          "nemesis_ghost_lee_0007"
+        ]
+      },
+      {
+        "u_run_npc_eocs": [
+          "EOC_NEMESIS_EFFECTS_ghost_lee_0007"
+        ],
+        "unique_ids": [
+          "nemesis_ghost_lee_0007"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_DEATH_NOTIFY_ghost_lee_0007",
+    "eoc_type": "ACTIVATION",
+    "condition": {
+      "math": [
+        "global_nemesis_just_died_ghost_lee_0007 == 1"
+      ]
+    },
+    "effect": [
+      {
+        "u_message": "<color_green>The tortured soul of Ghost Lee has finally found peace.</color>",
+        "type": "good"
+      },
+      {
+        "u_message": "A weight lifts from your shoulders. It's over.",
+        "type": "good"
+      },
+      {
+        "u_add_morale": "morale_nemesis_justice",
+        "bonus": 20,
+        "max_bonus": 20,
+        "duration": "6 hours",
+        "decay_start": "3 hours"
+      },
+      {
+        "math": [
+          "global_nemesis_just_died_ghost_lee_0007 = 0"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_WOUNDS_ghost_lee_0007",
+    "eoc_type": "ACTIVATION",
+    "effect": [
+      {
+        "math": [
+          "u_hp('arm_l') = u_hp_max('arm_l') * 0.78"
+        ]
+      },
+      {
+        "math": [
+          "u_hp('arm_r') = u_hp_max('arm_r') * 0.9"
+        ]
+      },
+      {
+        "math": [
+          "u_hp('head') = u_hp_max('head') * 0.7"
+        ]
+      },
+      {
+        "math": [
+          "u_hp('leg_l') = u_hp_max('leg_l') * 0.44"
+        ]
+      },
+      {
+        "math": [
+          "u_hp('leg_r') = u_hp_max('leg_r') * 0.93"
+        ]
+      },
+      {
+        "math": [
+          "u_hp('torso') = u_hp_max('torso') * 0.81"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_EFFECTS_ghost_lee_0007",
+    "eoc_type": "ACTIVATION",
+    "effect": [
+      {
+        "u_learn_martial_art": "style_brawling"
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_HUNT_REDIRECT_ghost_lee_0007",
+    "eoc_type": "EVENT",
+    "required_event": "avatar_enters_omt",
+    "condition": {
+      "math": [
+        "global_nemesis_spawned_ghost_lee_0007 == 2"
+      ]
+    },
+    "effect": [
+      {
+        "u_location_variable": {
+          "global_val": "global_nemesis_player_ms_pos"
+        },
+        "min_radius": 0,
+        "max_radius": 0
+      },
+      {
+        "math": [
+          "global_player_omt_x = u_val('pos_x') / 24"
+        ]
+      },
+      {
+        "math": [
+          "global_player_omt_y = u_val('pos_y') / 24"
+        ]
+      },
+      {
+        "u_run_npc_eocs": [
+          "EOC_NEMESIS_REDIRECT_NPC_ghost_lee_0007"
+        ],
+        "unique_ids": [
+          "nemesis_ghost_lee_0007"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_REDIRECT_NPC_ghost_lee_0007",
+    "eoc_type": "ACTIVATION",
+    "condition": {
+      "u_has_effect": "NEMESIS_HUNTING"
+    },
+    "effect": [
+      {
+        "location_variable_adjust": {
+          "global_val": "global_nemesis_player_ms_pos"
+        },
+        "output_var": {
+          "u_val": "nemesis_last_tracked_pos"
+        }
+      },
+      {
+        "u_set_goal": {
+          "om_terrain": "field",
+          "var": {
+            "u_val": "nemesis_last_tracked_pos"
+          }
+        }
+      }
+    ]
+  }
+]

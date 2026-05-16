@@ -1,0 +1,499 @@
+[
+  {
+    "type": "faction",
+    "id": "nemesis_faction_quinn_martinez_0001",
+    "name": "Nemesis (quinn_martinez_0001)",
+    "likes_u": -100,
+    "respects_u": -100,
+    "known_by_u": true,
+    "description": "A nemesis returned from death.",
+    "size": 1,
+    "power": 100,
+    "wealth": 0,
+    "fac_food_supply": [
+      [
+        0,
+        {
+          "calories": 0,
+          "vitamins": {}
+        }
+      ]
+    ],
+    "mon_faction": "zombie",
+    "relations": {
+      "old_guard": {
+        "kill on sight": true
+      },
+      "free_merchants": {
+        "kill on sight": true
+      },
+      "tacoma_commune": {
+        "kill on sight": true
+      },
+      "your_followers": {
+        "kill on sight": true
+      },
+      "robofac": {
+        "kill on sight": true
+      },
+      "exodii": {
+        "kill on sight": true
+      }
+    }
+  },
+  {
+    "type": "ITEM",
+    "id": "nemesis_memento_quinn_martinez_0001",
+    "name": {
+      "str": "memento — Quinn Martinez"
+    },
+    "description": "\"Worn down to almost nothing. Like them.\" - Quinn Martinez is finally allowed to rest.",
+    "weight": "50 g",
+    "volume": "250 ml",
+    "price": "0 cent",
+    "material": [
+      "leather"
+    ],
+    "symbol": "?",
+    "color": "dark_gray",
+    "flags": [
+      "NO_REPAIR"
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "nem_worn_quinn_martinez_0001",
+    "subtype": "collection",
+    "entries": [
+      {
+        "item": "pants_faux_fur",
+        "prob": 100,
+        "damage": [
+          2,
+          2
+        ],
+        "custom-flags": [
+          "FILTHY"
+        ]
+      },
+      {
+        "item": "long_knit_scarf",
+        "prob": 100,
+        "damage": [
+          3,
+          3
+        ],
+        "custom-flags": [
+          "FILTHY"
+        ]
+      },
+      {
+        "item": "skirt",
+        "prob": 100,
+        "damage": [
+          3,
+          3
+        ],
+        "custom-flags": [
+          "FILTHY"
+        ]
+      },
+      {
+        "item": "xs_gloves_wool_fingerless",
+        "prob": 100,
+        "damage": [
+          3,
+          3
+        ],
+        "custom-flags": [
+          "FILTHY"
+        ]
+      },
+      {
+        "item": "chestrig",
+        "prob": 100,
+        "damage": [
+          2,
+          2
+        ],
+        "custom-flags": [
+          "FILTHY"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "nem_carry_quinn_martinez_0001",
+    "subtype": "collection",
+    "entries": [
+      {
+        "item": "tourniquet_upper",
+        "prob": 100
+      },
+      {
+        "item": "caffeine",
+        "prob": 100,
+        "damage": [
+          3,
+          3
+        ]
+      }
+    ]
+  },
+  {
+    "type": "item_group",
+    "id": "nem_weapon_quinn_martinez_0001",
+    "subtype": "collection",
+    "entries": [
+      {
+        "item": "pike",
+        "prob": 100,
+        "damage": [
+          4,
+          4
+        ]
+      }
+    ]
+  },
+  {
+    "type": "npc_class",
+    "id": "NC_NEMESIS_quinn_martinez_0001",
+    "name": {
+      "str": "Nemesis (Quinn Martinez)"
+    },
+    "job_description": "Famous last words: \"I can't keep my eyes open.\" Sat down and didn't get back up.",
+    "common": false,
+    "bonus_str": 3,
+    "bonus_dex": 1,
+    "bonus_int": 3,
+    "bonus_per": 2,
+    "worn_override": "nem_worn_quinn_martinez_0001",
+    "carry_override": "nem_carry_quinn_martinez_0001",
+    "weapon_override": "nem_weapon_quinn_martinez_0001",
+    "traits": [
+      [
+        "NEMESIS_MARK",
+        100
+      ],
+      [
+        "SEESLEEP",
+        100
+      ],
+      [
+        "INSOMNIA",
+        100
+      ],
+      [
+        "FACIAL_HAIR_CIRCLE",
+        100
+      ]
+    ],
+    "skills": [
+      {
+        "skill": "bashing",
+        "level": {
+          "constant": 1
+        }
+      },
+      {
+        "skill": "dodge",
+        "level": {
+          "constant": 2
+        }
+      },
+      {
+        "skill": "melee",
+        "level": {
+          "constant": 4
+        }
+      },
+      {
+        "skill": "survival",
+        "level": {
+          "constant": 3
+        }
+      }
+    ]
+  },
+  {
+    "type": "npc",
+    "id": "npc_nemesis_quinn_martinez_0001",
+    "name_unique": "Quinn Martinez",
+    "class": "NC_NEMESIS_quinn_martinez_0001",
+    "attitude": 10,
+    "mission": 0,
+    "chat": "TALK_DONE",
+    "faction": "nemesis_faction_quinn_martinez_0001",
+    "death_eocs": [
+      {
+        "id": "EOC_NEMESIS_DEATH_inline_npc_nemesis_quinn_martinez_0001",
+        "eoc_type": "NPC_DEATH",
+        "effect": [
+          {
+            "math": [
+              "global_nemesis_just_died_quinn_martinez_0001 = 1"
+            ]
+          },
+          {
+            "math": [
+              "global_nemesis_spawned_quinn_martinez_0001 = 3"
+            ]
+          },
+          {
+            "u_spawn_item": "nemesis_memento_quinn_martinez_0001",
+            "count": 1
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_SPAWN_CHECK_quinn_martinez_0001",
+    "eoc_type": "ACTIVATION",
+    "condition": {
+      "and": [
+        {
+          "math": [
+            "global_nemesis_spawn_lock == 0"
+          ]
+        },
+        {
+          "math": [
+            "global_nemesis_spawned_quinn_martinez_0001 == 1"
+          ]
+        },
+        {
+          "math": [
+            "time_since(global_nemesis_char_start_quinn_martinez_0001) >= time('3 days')"
+          ]
+        },
+        {
+          "not": "u_is_outside"
+        }
+      ]
+    },
+    "effect": [
+      {
+        "u_spawn_npc": "npc_nemesis_quinn_martinez_0001",
+        "unique_id": "nemesis_quinn_martinez_0001",
+        "real_count": 1,
+        "min_radius": 40,
+        "max_radius": 55,
+        "true_eocs": [
+          "EOC_NEMESIS_SPAWN_SUCCESS_quinn_martinez_0001"
+        ]
+      }
+    ],
+    "false_effect": [
+      {
+        "if": {
+          "math": [
+            "global_nemesis_spawned_quinn_martinez_0001 == 0"
+          ]
+        },
+        "then": [
+          {
+            "math": [
+              "global_nemesis_spawned_quinn_martinez_0001 = 1"
+            ]
+          },
+          {
+            "math": [
+              "global_nemesis_char_start_quinn_martinez_0001 = time('now')"
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_SPAWN_SUCCESS_quinn_martinez_0001",
+    "eoc_type": "ACTIVATION",
+    "effect": [
+      {
+        "math": [
+          "global_nemesis_spawned_quinn_martinez_0001 = 2"
+        ]
+      },
+      {
+        "math": [
+          "global_nemesis_last_spawn = time('now')"
+        ]
+      },
+      {
+        "math": [
+          "global_nemesis_spawn_lock = 1"
+        ]
+      },
+      {
+        "if": {
+          "math": [
+            "u_val('perception') >= 10"
+          ]
+        },
+        "then": {
+          "u_message": "<color_red>A chill runs down your spine... Quinn Martinez has returned from the grave.</color>",
+          "type": "bad"
+        }
+      },
+      {
+        "u_run_npc_eocs": [
+          "EOC_NEMESIS_WOUNDS_quinn_martinez_0001"
+        ],
+        "unique_ids": [
+          "nemesis_quinn_martinez_0001"
+        ]
+      },
+      {
+        "u_run_npc_eocs": [
+          "EOC_NEMESIS_EFFECTS_quinn_martinez_0001"
+        ],
+        "unique_ids": [
+          "nemesis_quinn_martinez_0001"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_DEATH_NOTIFY_quinn_martinez_0001",
+    "eoc_type": "ACTIVATION",
+    "condition": {
+      "math": [
+        "global_nemesis_just_died_quinn_martinez_0001 == 1"
+      ]
+    },
+    "effect": [
+      {
+        "u_message": "<color_green>Quinn Martinez is finally allowed to rest.</color>",
+        "type": "good"
+      },
+      {
+        "u_message": "A weight lifts from your shoulders. It's over.",
+        "type": "good"
+      },
+      {
+        "u_add_morale": "morale_nemesis_justice",
+        "bonus": 20,
+        "max_bonus": 20,
+        "duration": "6 hours",
+        "decay_start": "3 hours"
+      },
+      {
+        "math": [
+          "global_nemesis_just_died_quinn_martinez_0001 = 0"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_WOUNDS_quinn_martinez_0001",
+    "eoc_type": "ACTIVATION",
+    "effect": [
+      {
+        "math": [
+          "u_hp('arm_l') = u_hp_max('arm_l') * 0.5"
+        ]
+      },
+      {
+        "math": [
+          "u_hp('arm_r') = u_hp_max('arm_r') * 0.25"
+        ]
+      },
+      {
+        "math": [
+          "u_hp('head') = u_hp_max('head') * 0.36"
+        ]
+      },
+      {
+        "math": [
+          "u_hp('leg_l') = u_hp_max('leg_l') * 0.05"
+        ]
+      },
+      {
+        "math": [
+          "u_hp('leg_r') = u_hp_max('leg_r') * 0.23"
+        ]
+      },
+      {
+        "math": [
+          "u_hp('torso') = u_hp_max('torso') * 0.27"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_EFFECTS_quinn_martinez_0001",
+    "eoc_type": "ACTIVATION",
+    "effect": []
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_HUNT_REDIRECT_quinn_martinez_0001",
+    "eoc_type": "EVENT",
+    "required_event": "avatar_enters_omt",
+    "condition": {
+      "math": [
+        "global_nemesis_spawned_quinn_martinez_0001 == 2"
+      ]
+    },
+    "effect": [
+      {
+        "u_location_variable": {
+          "global_val": "global_nemesis_player_ms_pos"
+        },
+        "min_radius": 0,
+        "max_radius": 0
+      },
+      {
+        "math": [
+          "global_player_omt_x = u_val('pos_x') / 24"
+        ]
+      },
+      {
+        "math": [
+          "global_player_omt_y = u_val('pos_y') / 24"
+        ]
+      },
+      {
+        "u_run_npc_eocs": [
+          "EOC_NEMESIS_REDIRECT_NPC_quinn_martinez_0001"
+        ],
+        "unique_ids": [
+          "nemesis_quinn_martinez_0001"
+        ]
+      }
+    ]
+  },
+  {
+    "type": "effect_on_condition",
+    "id": "EOC_NEMESIS_REDIRECT_NPC_quinn_martinez_0001",
+    "eoc_type": "ACTIVATION",
+    "condition": {
+      "u_has_effect": "NEMESIS_HUNTING"
+    },
+    "effect": [
+      {
+        "location_variable_adjust": {
+          "global_val": "global_nemesis_player_ms_pos"
+        },
+        "output_var": {
+          "u_val": "nemesis_last_tracked_pos"
+        }
+      },
+      {
+        "u_set_goal": {
+          "om_terrain": "field",
+          "var": {
+            "u_val": "nemesis_last_tracked_pos"
+          }
+        }
+      }
+    ]
+  }
+]
